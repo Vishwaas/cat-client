@@ -1,0 +1,36 @@
+<style>
+  .form-field {
+    display: flex;
+    padding: 0px 10px;
+    justify-content: space-between;
+    border-bottom: 1px solid grey;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+  }
+</style>
+
+<div class="form-field">
+  <span>{data.name}</span>
+  <span>
+    <slot>
+      <input class="rounded-textbox" value={data.value || ''}/>
+    </slot>
+    {#if data.values}
+      <div class="value-container">
+        {#each data.values as value}
+          <ValueBox value={value} />
+        {/each}
+      </div>
+    {/if}
+  </span>
+</div>
+
+<script>
+  import ValueBox from './value-box.html';
+  export default {
+    components: {ValueBox},
+    data() {
+      return {};
+    }
+  };
+</script>

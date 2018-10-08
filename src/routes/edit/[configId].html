@@ -1,0 +1,24 @@
+<h2>Edit Configuration</h2>
+<ConfigEditor data={data}/>
+<script>
+  import ConfigEditor from '../../components/config-editor.html';
+  export default {
+    preload({params, query}) {
+      let {configId} = params;
+      return new Promise((resolve) => {
+        resolve({
+          id: 213,
+          name: 'Base Config 1',
+          filters: [{
+            name: 'F1',
+            values: [123, 456]
+          }]
+        })
+      }).then((result) => {
+        return {data: result};
+      });
+    },
+
+    components:{ConfigEditor}
+  };
+</script>

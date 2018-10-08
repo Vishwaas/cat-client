@@ -1,0 +1,88 @@
+<style>
+  .config-box {
+    width: 300px;
+    margin: 5px 15px 5px 0px;
+    border: 1px solid grey;
+    border-radius: 5px;
+    box-shadow: 3px 0px 3px 0px grey;
+    padding: 0px 10px 20px;
+    position: relative;
+  }
+  .config-box::after {
+    position: absolute;
+    content: "...";
+    text-align: center;
+    width: 100%;
+    height: 20px;
+    bottom: 0px;
+  }
+
+  .filter-row {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    padding: 5px;
+  }
+
+  a, button {
+    margin: 0px 2px;
+  }
+
+  .delete-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+</style>
+
+<div class="config-box">
+  <ActionHeader>
+    <h3 slot="header">{config.name}</h3>
+    <a href="edit/{config.id}" slot="actions">Edit</a>
+    <button on:click="set({showDeleteModal: true})" slot="actions">Delete</button>
+  </ActionHeader>
+
+  <div class="filter-list">
+    {#each config.filters as filter}
+      <div class="filter-row">
+        <span>{filter.name}</span>
+        <span>
+          {(filter.values || []).join(',')}
+        </span>
+      </div>
+    {/each}
+  </div>
+</div>
+
+{#if showDeleteModal}
+  <ModalWindow>
+    <h4 slot="header">Delete Configuration</h4>
+    <p slot="body">Are you sure you want to delete configuration {config.name}?</p>
+    <div class="delete-actions" slot="footer">
+      <button>Confirm</button>
+      <button on:click="set({showDeleteModal: false})">Cancel</button>
+    </div>
+  </ModalWindow>
+{/if}
+
+
+<script>
+  import ActionHeader from './action-header.html';
+  import ModalWindow from './modal-window.html';
+
+  export default {
+    components: {
+      ActionHeader,
+      ModalWindow
+    },
+    data() {
+      return {
+        showDeleteModal: false,
+        config: {
+          filters: []
+        }
+      };
+    }
+  };
+
+</script>

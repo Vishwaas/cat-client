@@ -1,0 +1,50 @@
+<h2>Configuration List</h2>
+{#await configurations}
+	<div class="loading"></div>
+{:then result}
+	<div class="configuration-container">
+		{#each result as configuration}
+			<ConfigBox config={configuration} />
+		{/each}
+	</div>
+{/await}
+
+<style>
+	.configuration-container {
+		display: flex;
+		justify-content: flex-start;
+		flex-wrap: wrap;
+	}
+</style>
+
+<script>
+	import ConfigBox from '../components/config-box';
+
+	let sample = [{
+		id: 1,
+		name: 'Base config',
+		filters: [
+			{name: "xyz", values: ["123"]},
+			{name: "abc", values: ["345"]}
+		]
+	}, {
+		id: 2,
+		name: 'Base config 2',
+		filters: [
+			{name: "xyz2", values: ["1232"]},
+			{name: "abc2", values: ["3452"]}
+		]
+	}];
+	export default {
+		components: {ConfigBox},
+
+	  data() {
+	    return {
+				id: null,
+				configurations: new Promise((resolve) => {
+					resolve(sample);
+				})
+			};
+	  }
+	};
+</script>

@@ -1,0 +1,36 @@
+<style>
+  a {
+    margin: 0px 5px;
+  }
+	main {
+		position: relative;
+		max-width: auto;
+		background-color: white;
+		padding: 2em;
+		width: 90%;
+		margin: 0 auto;
+		box-sizing: border-box;
+	}
+</style>
+
+<main>
+	<ActionHeader>
+	  <h1 slot="header">Configuration Admin Tool</h1>
+	  <a class="home-btn" slot="actions" href="/" >Home</a>
+	  <a class="add-btn" slot="actions" href="/create">Create</a>
+	</ActionHeader>
+
+	<svelte:component this={child.component} {...child.props}/>
+</main>
+
+<script>
+	import ActionHeader from "../components/action-header.html";
+
+	export default {
+		components: {ActionHeader},
+
+	  data() {
+	    return {};
+	  }
+  };
+</script>
