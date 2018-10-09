@@ -1,3 +1,18 @@
+<style>
+  .add-new-filter {
+    margin: 0px auto;
+    display: block;
+  }
+  .editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  .editor-actions button {
+      margin: 0px 5px;
+  }
+</style>
+
 <form>
   {#if data.id}
     <FormField data={{name: "ID"}}>
@@ -11,7 +26,13 @@
       <FormField data={filter} />
     {/each}
   {/if}
+  <button class="add-new-filter">Add New Filter</button>
 </form>
+
+<div class="editor-actions">
+  <button>Save</button>
+  <button>Cancel</button>
+</div>
 
 <script>
   import FormField from './form-field.html';
