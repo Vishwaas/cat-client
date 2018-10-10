@@ -3,9 +3,13 @@
 	<div class="loading">Loading. Please Wait...</div>
 {:then result}
 	<div class="configuration-container">
-		{#each result as configuration}
-			<ConfigBox config={configuration} />
-		{/each}
+		{#if result && result.length}
+			{#each result as configuration}
+				<ConfigBox config={configuration} />
+			{/each}
+		{:else}
+			No Configurations available. Kindle create one.
+		{/if}
 	</div>
 {/await}
 
@@ -20,33 +24,20 @@
 <script>
 	import ConfigBox from "../components/config-box";
 
-	let sample = [
-	  {
-	    id: 1,
-	    name: "Base config",
-	    filters: [
-	      { name: "xyz", values: ["123"] },
-	      { name: "abc", values: ["345"] }
-	    ]
-	  },
-	  {
-	    id: 2,
-	    name: "Base config 2",
-	    filters: [
-	      { name: "xyz2", values: ["1232"] },
-	      { name: "abc2", values: ["3452"] }
-	    ]
-	  }
-	];
 	export default {
 	  components: { ConfigBox },
 
+	  preload() {
+	    return this.fetch("http://localhost:3000/v1/config")
+	      .then(r => r.json())
+	      .then(configurations => {
+	        return { configurations };
+	      });
+	  },
+
 	  data() {
 	    return {
-	      id: null,
-	      configurations: new Promise(resolve => {
-	        resolve(sample);
-	      })
+	      id: null
 	    };
 	  }
 	};
