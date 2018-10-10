@@ -7,18 +7,27 @@
     margin-bottom: 25px;
     padding-bottom: 10px;
   }
+  .add-box {
+    padding-right: 30px;
+  }
+  .add-value {
+    margin-left: -35px;
+  }
 </style>
 
 <div class="form-field">
   <span>{data.name}</span>
   <span>
     <slot>
-      <input class="rounded-textbox" value={data.value || ''}/>
+      <input class="add-box rounded-textbox" bind:value=value />
+      {#if data && data.values}
+        <button on:click="addNewValue()" class="add-value">+</button>
+      {/if}
     </slot>
-    {#if data.values}
+    {#if data && data.values}
       <div class="value-container">
         {#each data.values as value}
-          <ValueBox value={value} />
+          <ValueBox on:filterValueDeletion="deleteFilterValue(event.value)" value={value} />
         {/each}
       </div>
     {/if}
@@ -26,11 +35,28 @@
 </div>
 
 <script>
-  import ValueBox from './value-box.html';
+  import ValueBox from "./value-box.html";
   export default {
-    components: {ValueBox},
+    components: { ValueBox },
     data() {
-      return {};
+      return {
+        value: ""
+      };
+    },
+    methods: {
+      deleteFilterValue(value) {
+        let { data } = this.get();
+        let position = data.values.indexOf(value);
+        data.values.splice(position, 1);
+        this.set({ data: data });
+      },
+      addNewValue() {
+        let { value, data } = this.get();
+        if (value) {
+          data.values.push(value);
+          this.set({ value: "", data: data });
+        }
+      }
     }
   };
 </script>

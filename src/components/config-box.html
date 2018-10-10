@@ -24,7 +24,8 @@
     padding: 5px;
   }
 
-  a, button {
+  a,
+  button {
     margin: 0px 2px;
   }
 
@@ -32,18 +33,17 @@
     display: flex;
     justify-content: flex-end;
   }
-
 </style>
 
 <div class="config-box">
   <ActionHeader>
-    <h3 slot="header">{config.name}</h3>
+    <h3 on:click="set({showDetails: true})" class="clickable" slot="header">{config.name}</h3>
     <a href="edit/{config.id}" slot="actions">Edit</a>
     <button on:click="set({showDeleteModal: true})" slot="actions">Delete</button>
   </ActionHeader>
 
   <div class="filter-list">
-    {#each config.filters as filter}
+    {#each topTwoFilters as filter}
       <div class="filter-row">
         <span>{filter.name}</span>
         <span>
@@ -65,15 +65,39 @@
   </ModalWindow>
 {/if}
 
+{#if showDetails}
+  <ModalWindow>
+    <h4 slot="header">{config.name}</h4>
+    <p slot="body" class="filter-list">
+      {#each config.filters as filter}
+          <div class="filter-row">
+            <span>{filter.name}</span>
+            <span>
+              {(filter.values || []).join(',')}
+            </span>
+          </div>
+        {/each}
+    </p>
+    <div class="delete-actions" slot="footer">
+      <button on:click="set({showDetails: false})">Ok</button>
+    </div>
+  </ModalWindow>
+{/if}
+
 
 <script>
-  import ActionHeader from './action-header.html';
-  import ModalWindow from './modal-window.html';
+  import ActionHeader from "./action-header.html";
+  import ModalWindow from "./modal-window.html";
 
   export default {
     components: {
       ActionHeader,
       ModalWindow
+    },
+    computed: {
+      topTwoFilters: ({ config }) => {
+        return config.filters.slice(0, 2);
+      }
     },
     data() {
       return {
@@ -84,5 +108,4 @@
       };
     }
   };
-
 </script>

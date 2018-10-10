@@ -9,39 +9,65 @@
     margin-top: 20px;
   }
   .editor-actions button {
-      margin: 0px 5px;
+    margin: 0px 5px;
+  }
+  .config-name {
+    margin-bottom: 30px;
+    border-bottom: 0px;
   }
 </style>
 
-<form>
-  {#if data.id}
-    <FormField data={{name: "ID"}}>
-      <span>{data.id}</span>
-    </FormField>
-  {/if}
-  <FormField data={{name: "Name", value: data.name}} />
+<FormField value={data.name} class="config-name" data={{name: "Name"}} />
 
-  {#if data && data.filters}
-    {#each data.filters as filter}
-      <FormField data={filter} />
-    {/each}
-  {/if}
-  <button class="add-new-filter">Add New Filter</button>
-</form>
+{#if data && data.filters}
+  {#each data.filters as filter}
+    <FormField data={filter} />
+  {/each}
+{/if}
+<button on:click="set({showAddFilter: true})" class="add-new-filter">Add New Filter</button>
 
 <div class="editor-actions">
-  <button>Save</button>
-  <button>Cancel</button>
+  <button on:click="saveEditor()">Save</button>
+  <button on:click="cancelEditor()">Cancel</button>
 </div>
 
+{#if showAddFilter}
+  <AddFilterModal on:notifyFilterAddition="updateFilterAddition(event.newFilter)"/>
+{/if}
+
 <script>
-  import FormField from './form-field.html';
+  import FormField from "./form-field.html";
+  import ModalWindow from "./modal-window.html";
+  import AddFilterModal from "./add-filter-modal.html";
+  import * as sapper from "../../__sapper__/client.js";
+
   export default {
-    components: {FormField},
-    data(){
+    components: {
+      FormField,
+      AddFilterModal
+    },
+    data() {
       return {
-        data: {}
+        showAddFilter: false,
+        data: {
+          name: "",
+          filters: []
+        }
       };
+    },
+    methods: {
+      updateFilterAddition(newFilter) {
+        if (newFilter) {
+          let { data } = this.get();
+          data.filters.push(newFilter);
+          this.set({ data: data });
+        }
+        this.set({ showAddFilter: false });
+      },
+      saveEditor() {},
+      cancelEditor() {
+        sapper.goto("/");
+      }
     }
-  }
+  };
 </script>

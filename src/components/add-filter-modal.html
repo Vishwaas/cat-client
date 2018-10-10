@@ -1,0 +1,52 @@
+<ModalWindow>
+  <h4 slot="header">Add New Filter</h4>
+  <div slot="body">
+    <FormField bind:value=newFilter.name data={{name: "Name"}} />
+    <FormField data={{name: "Values", values: newFilter.values }} />
+  </div>
+  <div class="delete-actions" slot="footer">
+    <button on:click="addNewFilter()">Add</button>
+    <button on:click="fire('notifyFilterAddition', {})">Cancel</button>
+  </div>
+  <div slot="footer">
+    {message}
+  </div>
+</ModalWindow>
+
+<script>
+  import FormField from "./form-field.html";
+  import ModalWindow from "./modal-window.html";
+
+  export default {
+    components: { FormField, ModalWindow },
+    data() {
+      return {
+        message: "",
+        newValue: null,
+        newFilter: {
+          name: null,
+          values: []
+        }
+      };
+    },
+    methods: {
+      isNewFilterValid() {
+        let { newFilter } = this.get();
+        return newFilter.name && newFilter.values.length;
+      },
+      addNewFilter() {
+        if (this.isNewFilterValid()) {
+          let { newFilter, parent } = this.get();
+
+          this.set({ message: "" });
+          this.fire("notifyFilterAddition", { newFilter });
+        } else {
+          this.set({
+            message:
+              "Invalid entry/entries. Make sure name and values are not empty"
+          });
+        }
+      }
+    }
+  };
+</script>

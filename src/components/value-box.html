@@ -29,6 +29,17 @@
 
 <div class="value-box">
   {value}
-  <button>X</button>
+  <button on:click="deleteFilterValue(value)">X</button>
 </div>
 
+<script>
+  export default {
+    methods: {
+      deleteFilterValue(value) {
+        this.fire("filterValueDeletion", {
+          value
+        });
+      }
+    }
+  };
+</script>
