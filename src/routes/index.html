@@ -11,40 +11,43 @@
 
 <style>
 	.configuration-container {
-		display: flex;
-		justify-content: flex-start;
-		flex-wrap: wrap;
+	  display: flex;
+	  justify-content: flex-start;
+	  flex-wrap: wrap;
 	}
 </style>
 
 <script>
-	import ConfigBox from '../components/config-box';
+	import ConfigBox from "../components/config-box";
 
-	let sample = [{
-		id: 1,
-		name: 'Base config',
-		filters: [
-			{name: "xyz", values: ["123"]},
-			{name: "abc", values: ["345"]}
-		]
-	}, {
-		id: 2,
-		name: 'Base config 2',
-		filters: [
-			{name: "xyz2", values: ["1232"]},
-			{name: "abc2", values: ["3452"]}
-		]
-	}];
+	let sample = [
+	  {
+	    id: 1,
+	    name: "Base config",
+	    filters: [
+	      { name: "xyz", values: ["123"] },
+	      { name: "abc", values: ["345"] }
+	    ]
+	  },
+	  {
+	    id: 2,
+	    name: "Base config 2",
+	    filters: [
+	      { name: "xyz2", values: ["1232"] },
+	      { name: "abc2", values: ["3452"] }
+	    ]
+	  }
+	];
 	export default {
-		components: {ConfigBox},
+	  components: { ConfigBox },
 
 	  data() {
 	    return {
-				id: null,
-				configurations: new Promise((resolve) => {
-					resolve(sample);
-				})
-			};
+	      id: null,
+	      configurations: new Promise(resolve => {
+	        resolve(sample);
+	      })
+	    };
 	  }
 	};
 </script>
