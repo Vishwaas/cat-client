@@ -32,7 +32,25 @@
 	      .then(r => r.json())
 	      .then(configurations => {
 	        return { configurations };
-	      });
+	      }).catch(() => {
+					return {
+						configurations: [{
+								name: "Config 1",
+								id: 1,
+								filters: [{
+									name: 'Filter 1',
+									values: ['0-10', '11-20']
+								}]
+							}, {
+							name: "Config 2",
+							id: 2,
+							filters: [{
+								name: 'Filter 2',
+								values: ['0-100', '101-200']
+							}]
+						}]
+					};
+				});
 	  },
 
 	  data() {

@@ -47,6 +47,13 @@
       deleteFilterValue(value) {
         let { data } = this.get();
         let position = data.values.indexOf(value);
+        if (data.values.length === 1) {
+          this.root.fire('alert-notification', {
+            header: 'Error',
+            message: 'Filter values cannot be empty. Add another before deleting the last one'
+          });
+          return;
+        }
         data.values.splice(position, 1);
         this.set({ data: data });
       },

@@ -14,32 +14,33 @@
 	.hide {
 	  display: none;
 	}
+
+	.add-btn {
+		background-image: url('CreateSymbol.png');
+	}
+
+	.home-btn {
+		background-image: url('HomeSymbol.png');
+	}
 </style>
 
 <main>
+	<AlertNotification />
 	<ActionHeader>
 	  <h1 slot="header">Configuration Admin Tool</h1>
-	  <a class="home-btn" slot="actions" href="/" >Home</a>
-	  <a class="add-btn" slot="actions" href="/create">Create</a>
+	  <a class="home-btn icon-btn" slot="actions" title="Home" href="/" />
+	  <a class="add-btn icon-btn" slot="actions" title="Create Config" href="/create" />
 	</ActionHeader>
-
-	<!-- <ModalWindow class="hide" ref:notification>
-    <h4 slot="header">Sucessful</h4>
-    <p slot="body">Action Successfully performed</p>
-    <div class="delete-actions" slot="footer">
-      <button on:click="refs.notification.classList.add('hide')">OK</button>
-    </div>
-  </ModalWindow> -->
 
 	<svelte:component this={child.component} {...child.props}/>
 </main>
 
 <script>
 	import ActionHeader from "../components/action-header.html";
-	import ModalWindow from "../components/modal-window.html";
+	import AlertNotification from '../components/alert-notification.html';
 
 	export default {
-	  components: { ActionHeader, ModalWindow },
+	  components: { ActionHeader, AlertNotification },
 
 	  data() {
 	    return {};

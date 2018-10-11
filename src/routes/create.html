@@ -13,7 +13,10 @@
           type: "POST",
           data: JSON.stringify(newConfig),
           success: () => {
-            alert("Successfully saved");
+            this.root.fire('alert-notification', {
+              header: 'Sucess',
+              message: 'Sucessed created new configuration'
+            });
           }
         });
       }

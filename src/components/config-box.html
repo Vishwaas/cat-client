@@ -33,13 +33,25 @@
     display: flex;
     justify-content: flex-end;
   }
+
+  .edit-btn {
+    background-image: url('EditSymbol.png');
+    width: 20px;
+    height:20px
+  }
+
+  .delete-btn {
+    background-image: url('DeleteSymbol.png');
+    width: 20px;
+    height:20px
+  }
 </style>
 
 <div class="config-box">
   <ActionHeader>
     <h3 on:click="set({showDetails: true})" class="clickable" slot="header">{config.name}</h3>
-    <a href="edit/{config.id}" slot="actions">Edit</a>
-    <button on:click="set({showDeleteModal: true})" slot="actions">Delete</button>
+    <a class="edit-btn icon-btn" href="edit/{config.id}" title="Edit {config.name}" slot="actions" />
+    <button class="delete-btn icon-btn" on:click="set({showDeleteModal: true})" title="Delete {config.name}" slot="actions" ></button>
   </ActionHeader>
 
   <div class="filter-list">
@@ -59,7 +71,7 @@
     <h4 slot="header">Delete Configuration</h4>
     <p slot="body">Are you sure you want to delete configuration {config.name}?</p>
     <div class="delete-actions" slot="footer">
-      <button>Confirm</button>
+      <button on:click="deleteConfig()">Confirm</button>
       <button on:click="set({showDeleteModal: false})">Cancel</button>
     </div>
   </ModalWindow>
@@ -84,10 +96,10 @@
   </ModalWindow>
 {/if}
 
-
 <script>
   import ActionHeader from "./action-header.html";
   import ModalWindow from "./modal-window.html";
+  import $ from "jquery";
 
   export default {
     components: {
@@ -97,6 +109,21 @@
     computed: {
       topTwoFilters: ({ config }) => {
         return config.filters.slice(0, 2);
+      }
+    },
+    methods: {
+      deleteConfig() {
+        let {config} = this.get();
+        $.ajax({
+          url: "http://localhost:3000/v1/config/" + config.id,
+          type: "DELETE",
+          success: () => {
+            this.root.fire('alert-notification', {
+              header: 'Sucess',
+              message: 'Sucessfully Deleted'
+            });
+          }
+        });
       }
     },
     data() {

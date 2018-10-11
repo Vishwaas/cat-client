@@ -1,7 +1,8 @@
 <h2>Edit Configuration</h2>
-<ConfigEditor data={data}/>
+<ConfigEditor on:saveConfig="createNewConfig(event.config)" data={data}/>
 <script>
   import ConfigEditor from '../../components/config-editor.html';
+  import $ from 'jquery';
   export default {
     preload({params, query}) {
       let {configId} = params;
@@ -19,6 +20,22 @@
       });
     },
 
-    components:{ConfigEditor}
+    components:{ConfigEditor},
+
+    methods: {
+      createNewConfig(newConfig) {
+        $.ajax({
+          url: "http://localhost:3000/v1/config/" + newConfig.id,
+          type: "PUT",
+          data: JSON.stringify(newConfig),
+          success: () => {
+            this.root.fire('alert-notification', {
+              header: 'Sucess',
+              message: 'Sucessed created new configuration'
+            });
+          }
+        });
+      }
+    }
   };
 </script>

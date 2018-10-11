@@ -1,0 +1,45 @@
+{#if showAlert}
+  <ModalWindow>
+    <h2 slot="header">{header}</h2>
+    <p slot="body">{message}</p>
+    <div slot="footer">
+      <button on:click="closeAlert()">Ok</button>
+    </div>
+  </ModalWindow>
+{/if}
+
+<script>
+  import ModalWindow from "./modal-window.html";
+  import $ from "jquery";
+
+  export default {
+    components: {
+      ModalWindow
+    },
+    oncreate() {
+      this.root.on("alert-notification", ({header, message}) => {
+        this.set({
+          showAlert: true,
+          header,
+          message
+        });
+      });
+    },
+    methods: {
+      closeAlert() {
+        this.set({
+          showAlert: false,
+          header: '',
+          message: ''
+        });
+      }
+    },
+    data() {
+      return {
+        showAlert: false,
+        header: '',
+        message: ''
+      };
+    }
+  };
+</script>
