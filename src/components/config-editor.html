@@ -17,7 +17,7 @@
   }
 </style>
 
-<FormField value={data.name} class="config-name" data={{name: "Name"}} />
+<FormField bind:value=data.name class="config-name" data={{name: "Name"}} />
 
 {#if data && data.filters}
   {#each data.filters as filter}
@@ -64,7 +64,12 @@
         }
         this.set({ showAddFilter: false });
       },
-      saveEditor() {},
+      saveEditor() {
+        let { data } = this.get();
+        this.fire("saveConfig", {
+          config: data
+        });
+      },
       cancelEditor() {
         sapper.goto("/");
       }

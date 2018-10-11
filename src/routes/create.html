@@ -1,10 +1,22 @@
 <h2>Create Configuration</h2>
-<ConfigEditor />
+<ConfigEditor on:saveConfig="createNewConfig(event.config)" />
 <script>
   import ConfigEditor from "../components/config-editor.html";
   import $ from "jquery";
 
   export default {
-    components: { ConfigEditor }
+    components: { ConfigEditor },
+    methods: {
+      createNewConfig(newConfig) {
+        $.ajax({
+          url: "http://localhost:3000/v1/config/",
+          type: "POST",
+          data: JSON.stringify(newConfig),
+          success: () => {
+            alert("Successfully saved");
+          }
+        });
+      }
+    }
   };
 </script>

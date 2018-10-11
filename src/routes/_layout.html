@@ -1,16 +1,19 @@
 <style>
-		a {
-		  margin: 0px 5px;
-		}
-		main {
-		  position: relative;
-		  max-width: auto;
-		  background-color: white;
-		  padding: 2em;
-		  width: 90%;
-		  margin: 0 auto;
-		  box-sizing: border-box;
-		}
+	a {
+	  margin: 0px 5px;
+	}
+	main {
+	  position: relative;
+	  max-width: auto;
+	  background-color: white;
+	  padding: 2em;
+	  width: 90%;
+	  margin: 0 auto;
+	  box-sizing: border-box;
+	}
+	.hide {
+	  display: none;
+	}
 </style>
 
 <main>
@@ -20,14 +23,23 @@
 	  <a class="add-btn" slot="actions" href="/create">Create</a>
 	</ActionHeader>
 
+	<!-- <ModalWindow class="hide" ref:notification>
+    <h4 slot="header">Sucessful</h4>
+    <p slot="body">Action Successfully performed</p>
+    <div class="delete-actions" slot="footer">
+      <button on:click="refs.notification.classList.add('hide')">OK</button>
+    </div>
+  </ModalWindow> -->
+
 	<svelte:component this={child.component} {...child.props}/>
 </main>
 
 <script>
 	import ActionHeader from "../components/action-header.html";
+	import ModalWindow from "../components/modal-window.html";
 
 	export default {
-	  components: { ActionHeader },
+	  components: { ActionHeader, ModalWindow },
 
 	  data() {
 	    return {};
