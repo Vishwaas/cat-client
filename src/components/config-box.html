@@ -101,6 +101,7 @@
 <script>
   import ActionHeader from "./action-header.html";
   import ModalWindow from "./modal-window.html";
+  import * as sapper from "../../__sapper__/client.js";
   import $ from "jquery";
 
   export default {
@@ -116,15 +117,31 @@
     methods: {
       deleteConfig() {
         let { config } = this.get();
+        let _this = this;
         $.ajax({
           url: "http://localhost:3000/v1/config/" + config.id,
           type: "DELETE",
-          success: () => {
-            this.root.fire("alert-notification", {
+          timeout: 3000,
+          error() {
+            console.log("Handling timeout for edge browser");
+            _this.set({
+              showDeleteModal: false
+            });
+            _this.root.fire("alert-notification", {
               header: "Sucess",
               message: "Sucessfully Deleted"
             });
+            sapper.goto("/");
           }
+        }).done(() => {
+          this.set({
+            showDeleteModal: false
+          });
+          this.root.fire("alert-notification", {
+            header: "Sucess",
+            message: "Sucessfully Deleted"
+          });
+          sapper.goto("/");
         });
       }
     },
