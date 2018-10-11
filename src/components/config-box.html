@@ -7,6 +7,8 @@
     box-shadow: 3px 0px 3px 0px grey;
     padding: 0px 10px 20px;
     position: relative;
+    height: 100px;
+    overflow: hidden;
   }
   .config-box::after {
     position: absolute;
@@ -35,15 +37,15 @@
   }
 
   .edit-btn {
-    background-image: url('EditSymbol.png');
+    background-image: url("EditSymbol.png");
     width: 20px;
-    height:20px
+    height: 20px;
   }
 
   .delete-btn {
-    background-image: url('DeleteSymbol.png');
+    background-image: url("DeleteSymbol.png");
     width: 20px;
-    height:20px
+    height: 20px;
   }
 </style>
 
@@ -113,14 +115,14 @@
     },
     methods: {
       deleteConfig() {
-        let {config} = this.get();
+        let { config } = this.get();
         $.ajax({
           url: "http://localhost:3000/v1/config/" + config.id,
           type: "DELETE",
           success: () => {
-            this.root.fire('alert-notification', {
-              header: 'Sucess',
-              message: 'Sucessfully Deleted'
+            this.root.fire("alert-notification", {
+              header: "Sucess",
+              message: "Sucessfully Deleted"
             });
           }
         });

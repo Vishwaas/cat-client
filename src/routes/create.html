@@ -3,6 +3,7 @@
 <script>
   import ConfigEditor from "../components/config-editor.html";
   import $ from "jquery";
+  import * as sapper from "../../__sapper__/client.js";
 
   export default {
     components: { ConfigEditor },
@@ -11,12 +12,15 @@
         $.ajax({
           url: "http://localhost:3000/v1/config/",
           type: "POST",
-          data: JSON.stringify(newConfig),
+          data: {
+            configuration: JSON.stringify(newConfig)
+          },
           success: () => {
-            this.root.fire('alert-notification', {
-              header: 'Sucess',
-              message: 'Sucessed created new configuration'
+            this.root.fire("alert-notification", {
+              header: "Sucess",
+              message: "Sucessed created new configuration"
             });
+            sapper.goto("/");
           }
         });
       }

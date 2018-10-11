@@ -1,38 +1,39 @@
 <h2>Edit Configuration</h2>
-<ConfigEditor on:saveConfig="createNewConfig(event.config)" data={data}/>
+<ConfigEditor on:saveConfig="editConfig(event.config)" data={configuration}/>
 <script>
-  import ConfigEditor from '../../components/config-editor.html';
-  import $ from 'jquery';
+  import ConfigEditor from "../../components/config-editor.html";
+  import * as sapper from "../../../__sapper__/client.js";
+  import $ from "jquery";
   export default {
-    preload({params, query}) {
-      let {configId} = params;
-      return new Promise((resolve) => {
-        resolve({
-          id: 213,
-          name: 'Base Config 1',
-          filters: [{
-            name: 'F1',
-            values: [123, 456]
-          }]
+    preload({ params, query }) {
+      let { configId } = params;
+      let _this = this;
+      return this.fetch("http://localhost:3000/v1/config/" + configId)
+        .then(r => r.json())
+        .then(configuration => {
+          return { configuration };
         })
-      }).then((result) => {
-        return {data: result};
-      });
+        .catch(() => {
+          console.error("Could not fetch confiugration");
+        });
     },
 
-    components:{ConfigEditor},
+    components: { ConfigEditor },
 
     methods: {
-      createNewConfig(newConfig) {
+      editConfig(newConfig) {
         $.ajax({
           url: "http://localhost:3000/v1/config/" + newConfig.id,
           type: "PUT",
-          data: JSON.stringify(newConfig),
+          data: {
+            configuration: JSON.stringify(newConfig)
+          },
           success: () => {
-            this.root.fire('alert-notification', {
-              header: 'Sucess',
-              message: 'Sucessed created new configuration'
+            this.root.fire("alert-notification", {
+              header: "Sucess",
+              message: "Sucessed created new configuration"
             });
+            sapper.goto("/");
           }
         });
       }
