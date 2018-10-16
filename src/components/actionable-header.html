@@ -1,0 +1,23 @@
+<div class="actionable-header">
+  <slot name="header"></slot>
+  <div class="actions-container">
+    <slot name="actions"></slot>
+  </div>
+</div>
+
+<script>
+  export default {};
+</script>
+
+<style type="text/scss" scoped>
+  .actionable-header {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    .actions-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+  }
+</style>

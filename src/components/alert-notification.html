@@ -1,5 +1,5 @@
 {#if showAlert}
-  <ModalWindow>
+  <ModalWindow class="alert-modal">
     <h2 slot="header">{header}</h2>
     <p slot="body">{message}</p>
     <div slot="footer">
@@ -17,7 +17,7 @@
       ModalWindow
     },
     oncreate() {
-      this.root.on("alert-notification", ({header, message}) => {
+      this.root.on("alert-notification", ({ header, message }) => {
         this.set({
           showAlert: true,
           header,
@@ -29,17 +29,23 @@
       closeAlert() {
         this.set({
           showAlert: false,
-          header: '',
-          message: ''
+          header: "",
+          message: ""
         });
       }
     },
     data() {
       return {
         showAlert: false,
-        header: '',
-        message: ''
+        header: "",
+        message: ""
       };
     }
   };
 </script>
+
+<style scoped type="text/scss">
+  .alert-modal {
+    z-index: 2000;
+  }
+</style>

@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const config = require('sapper/config/webpack.js');
 const pkg = require('./package.json');
-const lessPreprocess = require('./less-preprocess.js');
+const sassPreprocess = require('./sass-preprocess.js');
 
 const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
@@ -17,6 +17,25 @@ module.exports = {
 		module: {
 			rules: [
 				{
+					test: /\.less$/,
+					use: ['style-loader', 'css-loader', 'sass-loader']
+				},
+				{
+					test: /\.css$/,
+					use: ['style-loader', 'css-loader']
+				},
+				{
+					test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+					use: [
+						{
+							loader: 'file-loader',
+							options: {
+								name: '[name].[ext]'
+							}
+						}
+					]
+				},
+				{
 					test: /\.html$/,
 					use: {
 						loader: 'svelte-loader',
@@ -25,7 +44,7 @@ module.exports = {
 							hydratable: true,
 							hotReload: true,
 							preprocess: {
-								style: lessPreprocess
+								style: sassPreprocess
 							}
 						}
 					}
@@ -62,7 +81,7 @@ module.exports = {
 							css: false,
 							generate: 'ssr',
 							preprocess: {
-								style: lessPreprocess
+								style: sassPreprocess
 							},
 							dev
 						}

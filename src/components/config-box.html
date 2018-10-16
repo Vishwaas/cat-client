@@ -1,4 +1,4 @@
-<style>
+<style type="text/scss" scoped>
   .config-box {
     width: 300px;
     margin: 5px 15px 5px 0px;
@@ -9,14 +9,14 @@
     position: relative;
     height: 100px;
     overflow: hidden;
-  }
-  .config-box::after {
-    position: absolute;
-    content: "...";
-    text-align: center;
-    width: 100%;
-    height: 20px;
-    bottom: 0px;
+    &::after {
+      position: absolute;
+      content: "...";
+      text-align: center;
+      width: 100%;
+      height: 20px;
+      bottom: 0px;
+    }
   }
 
   .filter-row {
@@ -50,11 +50,11 @@
 </style>
 
 <div class="config-box">
-  <ActionHeader>
+  <ActionableHeader>
     <h3 on:click="set({showDetails: true})" class="clickable" slot="header">{config.name}</h3>
     <a class="edit-btn icon-btn" href="edit/{config.id}" title="Edit {config.name}" slot="actions" />
     <button class="delete-btn icon-btn" on:click="set({showDeleteModal: true})" title="Delete {config.name}" slot="actions" ></button>
-  </ActionHeader>
+  </ActionableHeader>
 
   <div class="filter-list">
     {#each topTwoFilters as filter}
@@ -99,14 +99,14 @@
 {/if}
 
 <script>
-  import ActionHeader from "./action-header.html";
+  import ActionableHeader from "./actionable-header.html";
   import ModalWindow from "./modal-window.html";
   import * as sapper from "../../__sapper__/client.js";
   import $ from "jquery";
 
   export default {
     components: {
-      ActionHeader,
+      ActionableHeader,
       ModalWindow
     },
     computed: {

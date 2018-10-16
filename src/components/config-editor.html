@@ -17,7 +17,9 @@
   }
 </style>
 
-<FormField bind:value=data.name class="config-name" data={{name: "Name"}} />
+<FormField bind:value=data.name class="config-name" data={{name: "Name"}}>
+  <input type="text" class="form-control" bind:value=data.name />
+</FormField>
 
 {#if data && data.filters}
   {#each data.filters as filter}
@@ -67,10 +69,10 @@
       saveEditor() {
         let { data } = this.get();
         if (!(data.name && data.filters && data.filters.length)) {
-          this.root.fire('alert-notification', {
-            header: 'Invalid Input',
-            message: 'Make sure configuration has name and filter values'
-          }); 
+          this.root.fire("alert-notification", {
+            header: "Invalid Input",
+            message: "Make sure configuration has name and filter values"
+          });
           return;
         }
         this.fire("saveConfig", {

@@ -1,8 +1,12 @@
 <ModalWindow>
   <h4 slot="header">Add New Filter</h4>
   <div slot="body">
-    <FormField bind:value=newFilter.name data={{name: "Name"}} />
-    <FormField data={{name: "Values", values: newFilter.values }} />
+    <FormField data={{name: "Name"}}>
+      <input type="text" class="form-control" bind:value=newFilter.name />
+    </FormField>
+    <FormField data={{name: "Values"}} >
+      <MultiValueTextBox value={newFilter.values} />
+    </FormField>
   </div>
   <div class="delete-actions" slot="footer">
     <button on:click="addNewFilter()">Add</button>
@@ -16,9 +20,10 @@
 <script>
   import FormField from "./form-field.html";
   import ModalWindow from "./modal-window.html";
+  import MultiValueTextBox from "./multivalue-textbox";
 
   export default {
-    components: { FormField, ModalWindow },
+    components: { FormField, ModalWindow, MultiValueTextBox },
     data() {
       return {
         message: "",

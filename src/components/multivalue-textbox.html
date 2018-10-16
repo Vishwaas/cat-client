@@ -1,0 +1,74 @@
+<div class="multivalue-textbox">
+  <input type="text" class="form-control" bind:value=value />
+  <button on:click="addValueToList()" class="icon-btn add-btn glyphicon glyphicon-plus"></button>
+  
+  {#if values}
+    <div class="value-container">
+      {#each values as value, index}
+        <ValueNugget on:valueDeletion="removeValueFromList(event.index)"  data={{value, index}}/>
+      {/each}
+    </div>
+  {/if}
+</div>
+
+<script>
+  import ValueNugget from "./value-nugget.html";
+
+  export default {
+    components: { ValueNugget },
+    data() {
+      return {
+        value: "",
+        values: []
+      };
+    },
+    methods: {
+      removeValueFromList(index) {
+        let { values } = this.get();
+
+        if (values.length === 1) {
+          this.root.fire("alert-notification", {
+            header: "Error",
+            message:
+              "Filter values cannot be empty. Add another before deleting the last one"
+          });
+        } else {
+          values.splice(index, 1);
+          this.set({ values });
+        }
+      },
+      addValueToList() {
+        let { value, values } = this.get();
+        if (value) {
+          values.push(value);
+          this.set({ value: "", values });
+        }
+      }
+    }
+  };
+</script>
+
+<style scoped type="text/scss">
+  .multivalue-textbox {
+    width: 250px;
+    position: relative;
+    .form-control {
+      padding-right: 30px;
+      width: 100%;
+      display: inline-block;
+      height: 30px;
+    }
+    .add-btn {
+      position: absolute;
+      right: 0px;
+      top: 0px;
+    }
+
+    .value-container {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+    }
+  }
+</style>

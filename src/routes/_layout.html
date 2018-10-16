@@ -16,31 +16,31 @@
 	}
 
 	.add-btn {
-		background-image: url('CreateSymbol.png');
+	  background-image: url("CreateSymbol.png");
 	}
 
 	.home-btn {
-		background-image: url('HomeSymbol.png');
+	  background-image: url("HomeSymbol.png");
 	}
 </style>
 
 <main>
 	<AlertNotification />
-	<ActionHeader>
+	<ActionableHeader>
 	  <h1 slot="header">Configuration Admin Tool</h1>
 	  <a class="home-btn icon-btn" slot="actions" title="Home" href="/" />
 	  <a class="add-btn icon-btn" slot="actions" title="Create Config" href="/create" />
-	</ActionHeader>
+	</ActionableHeader>
 
 	<svelte:component this={child.component} {...child.props}/>
 </main>
 
 <script>
-	import ActionHeader from "../components/action-header.html";
-	import AlertNotification from '../components/alert-notification.html';
+	import ActionableHeader from "../components/actionable-header.html";
+	import AlertNotification from "../components/alert-notification.html";
 
 	export default {
-	  components: { ActionHeader, AlertNotification },
+	  components: { ActionableHeader, AlertNotification },
 
 	  data() {
 	    return {};

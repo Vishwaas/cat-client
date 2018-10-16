@@ -1,0 +1,27 @@
+<div class="value-nugget">
+  {data.value}
+  <button class="icon-btn glyphicon glyphicon-remove" on:click="fire('valueDeletion', { index: data.index })"></button>
+</div>
+
+<script>
+  export default {};
+</script>
+
+<style scoped type="text/scss">
+  .value-nugget {
+    display: inline-block;
+    padding: 2px 20px 2px 2px;
+    margin: 5px;
+    border: 1px solid grey;
+    position: relative;
+    border-radius: 5px;
+
+    .icon-btn {
+      position: absolute;
+      right: 0px;
+      top: 5px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+</style>
