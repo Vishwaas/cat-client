@@ -1,59 +1,8 @@
-<style type="text/scss" scoped>
-  .config-box {
-    width: 300px;
-    margin: 5px 15px 5px 0px;
-    border: 1px solid grey;
-    border-radius: 5px;
-    box-shadow: 3px 0px 3px 0px grey;
-    padding: 0px 10px 20px;
-    position: relative;
-    height: 100px;
-    overflow: hidden;
-    &::after {
-      position: absolute;
-      content: "...";
-      text-align: center;
-      width: 100%;
-      height: 20px;
-      bottom: 0px;
-    }
-  }
-
-  .filter-row {
-    display: flex;
-    justify-content: space-between;
-    align-content: center;
-    padding: 5px;
-  }
-
-  a,
-  button {
-    margin: 0px 2px;
-  }
-
-  .delete-actions {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .edit-btn {
-    background-image: url("EditSymbol.png");
-    width: 20px;
-    height: 20px;
-  }
-
-  .delete-btn {
-    background-image: url("DeleteSymbol.png");
-    width: 20px;
-    height: 20px;
-  }
-</style>
-
 <div class="config-box">
   <ActionableHeader>
     <h3 on:click="set({showDetails: true})" class="clickable" slot="header">{config.name}</h3>
-    <a class="edit-btn icon-btn" href="edit/{config.id}" title="Edit {config.name}" slot="actions" />
-    <button class="delete-btn icon-btn" on:click="set({showDeleteModal: true})" title="Delete {config.name}" slot="actions" ></button>
+    <a class="glyphicon glyphicon-edit icon-btn" href="edit/{config.id}" title="Edit {config.name}" slot="actions" />
+    <button class="glyphicon glyphicon-trash icon-btn" on:click="set({showDeleteModal: true})" title="Delete {config.name}" slot="actions" ></button>
   </ActionableHeader>
 
   <div class="filter-list">
@@ -155,3 +104,51 @@
     }
   };
 </script>
+
+<style type="text/scss" scoped>
+  .config-box {
+    width: 300px;
+    margin: 5px 15px 5px 0px;
+    border: 1px solid grey;
+    border-radius: 5px;
+    box-shadow: 3px 0px 3px 0px grey;
+    padding: 0px 10px 20px;
+    position: relative;
+    height: 150px;
+    overflow: hidden;
+    &::after {
+      position: absolute;
+      content: "...";
+      text-align: center;
+      line-height: 20px;
+      vertical-align: middle;
+      width: 280px;
+      height: 20px;
+      bottom: 0px;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+  }
+
+  .filter-row {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    padding: 5px;
+  }
+
+  a,
+  button {
+    margin: 0px 2px;
+  }
+
+  .delete-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .icon-btn {
+    height: 16px;
+    width: 16px;
+  }
+</style>

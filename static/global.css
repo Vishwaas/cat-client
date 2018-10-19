@@ -44,16 +44,3 @@ code {
 		font-size: 16px;
 	}
 }
-
-.icon-btn {
-	border: none;
-	border-radius: 5px;
-	width: 30px;
-	height: 30px;
-	background: none;
-	padding: 0px;
-}
-
-.form-control[type='text'] {
-	width: 250px;
-}

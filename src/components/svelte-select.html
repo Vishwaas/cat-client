@@ -1,0 +1,38 @@
+<select class="form-control" on:select="selectOption()">
+  {#if prompt}
+    <option>{prompt}</option>
+  {/if}
+  {#each options as option, index}
+    {#if selectedValue === option.value} 
+      <option data-index={index} value={option.value} selected}>{option.label}</option>
+    {:else}
+      <option data-index={index} value={option.value}>{option.label}</option>
+    {/if}
+   
+  {/each}
+</select>
+
+<script>
+  import $ from "jquery";
+
+  export default {
+    data() {
+      return {
+        prompt: "",
+        selectedValue: {}
+      };
+    },
+
+    methods: {
+      selectOption() {
+        let $selectedOption = $("select :selected");
+        let option = {
+          label: $selectedOption.text(),
+          value: $selectedOption.val(),
+          index: $selectedOption.data("index")
+        };
+        this.fire("change", option);
+      }
+    }
+  };
+</script>

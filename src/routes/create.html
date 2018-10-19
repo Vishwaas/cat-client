@@ -4,25 +4,26 @@
   import ConfigEditor from "../components/config-editor.html";
   import $ from "jquery";
   import * as sapper from "../../__sapper__/client.js";
+  import AjaxService from "../services/ajax";
 
   export default {
     components: { ConfigEditor },
     methods: {
       createNewConfig(newConfig) {
-        $.ajax({
-          url: "http://localhost:3000/v1/config/",
-          type: "POST",
-          data: {
-            configuration: JSON.stringify(newConfig)
-          },
-          success: () => {
+        AjaxService.post()
+          .then(() => {
             this.root.fire("alert-notification", {
-              header: "Sucess",
+              header: "Success",
               message: "Sucessed created new configuration"
             });
             sapper.goto("/");
-          }
-        });
+          })
+          .catch(err => {
+            this.root.fire("alert-notification", {
+              header: "Error",
+              message: "Could not create new configuration. Try after sometime"
+            });
+          });
       }
     }
   };

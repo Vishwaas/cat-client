@@ -1,3 +1,29 @@
+<main>
+	<Loader />
+	<AlertNotification />
+	<ActionableHeader>
+	  <h1 slot="header">Configuration Admin Tool</h1>
+	  <a class="glyphicon glyphicon-home icon-btn" slot="actions" title="Home" href="/" />
+	  <a class="glyphicon glyphicon-pencil icon-btn" slot="actions" title="Create Config" href="/create" />
+	</ActionableHeader>
+
+	<svelte:component this={child.component} {...child.props}/>
+</main>
+
+<script>
+	import ActionableHeader from "../components/actionable-header.html";
+	import AlertNotification from "../components/alert-notification.html";
+	import Loader from "../components/loader.html";
+
+	export default {
+	  components: { ActionableHeader, AlertNotification, Loader },
+
+	  data() {
+	    return {};
+	  }
+	};
+</script>
+
 <style>
 	a {
 	  margin: 0px 5px;
@@ -15,35 +41,7 @@
 	  display: none;
 	}
 
-	.add-btn {
-	  background-image: url("CreateSymbol.png");
-	}
-
-	.home-btn {
-	  background-image: url("HomeSymbol.png");
+	.icon-btn {
+	  font-size: 2rem;
 	}
 </style>
-
-<main>
-	<AlertNotification />
-	<ActionableHeader>
-	  <h1 slot="header">Configuration Admin Tool</h1>
-	  <a class="home-btn icon-btn" slot="actions" title="Home" href="/" />
-	  <a class="add-btn icon-btn" slot="actions" title="Create Config" href="/create" />
-	</ActionableHeader>
-
-	<svelte:component this={child.component} {...child.props}/>
-</main>
-
-<script>
-	import ActionableHeader from "../components/actionable-header.html";
-	import AlertNotification from "../components/alert-notification.html";
-
-	export default {
-	  components: { ActionableHeader, AlertNotification },
-
-	  data() {
-	    return {};
-	  }
-	};
-</script>

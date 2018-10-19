@@ -1,52 +1,45 @@
-<style>
-  .add-new-filter {
-    margin: 0px auto;
-    display: block;
-  }
-  .editor-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-  }
-  .editor-actions button {
-    margin: 0px 5px;
-  }
-  .config-name {
-    margin-bottom: 30px;
-    border-bottom: 0px;
-  }
-</style>
+<div class="config-editor">
+  <FormField bind:value=data.name classNames="config-name" data={{name: "Name"}}>
+    <input type="text" class="form-control" bind:value=data.name />
+  </FormField>
 
-<FormField bind:value=data.name class="config-name" data={{name: "Name"}}>
-  <input type="text" class="form-control" bind:value=data.name />
-</FormField>
+  {#if data && data.filters}
+    {#each data.filters as filter, index}
+      <div class="form-field-container">
+        <FormField classNames="filter-row" data={{name: filter.name}} >
+          <MultiValueTextBox values={filter.values} />
+        </FormField>
+        <button data-toggle="tooltip" title="Delete Filter" on:click="deleteFilter(index)" class="icon-btn glyphicon glyphicon-remove-circle"></button>
+      </div>
+    {/each}
+  {/if}
+  <button on:click="set({showAddFilter: true})" class="btn btn-primary add-new-filter">
+    Add New Filter 
+    <span class="glyphicon glyphicon-plus-sign"></span>
+  </button>
 
-{#if data && data.filters}
-  {#each data.filters as filter}
-    <FormField data={filter} />
-  {/each}
-{/if}
-<button on:click="set({showAddFilter: true})" class="add-new-filter">Add New Filter</button>
+  <div class="editor-actions">
+    <button class="btn btn-primary" on:click="saveEditor()">Save</button>
+    <button class="btn btn-default" on:click="cancelEditor()">Cancel</button>
+  </div>
 
-<div class="editor-actions">
-  <button on:click="saveEditor()">Save</button>
-  <button on:click="cancelEditor()">Cancel</button>
+  {#if showAddFilter}
+    <AddFilterModal on:notifyFilterAddition="updateFilterAddition(event.newFilter)"/>
+  {/if}
 </div>
-
-{#if showAddFilter}
-  <AddFilterModal on:notifyFilterAddition="updateFilterAddition(event.newFilter)"/>
-{/if}
 
 <script>
   import FormField from "./form-field.html";
   import ModalWindow from "./modal-window.html";
   import AddFilterModal from "./add-filter-modal.html";
+  import MultiValueTextBox from "./multivalue-textbox.html";
   import * as sapper from "../../__sapper__/client.js";
 
   export default {
     components: {
       FormField,
-      AddFilterModal
+      AddFilterModal,
+      MultiValueTextBox
     },
     data() {
       return {
@@ -65,6 +58,20 @@
           this.set({ data: data });
         }
         this.set({ showAddFilter: false });
+      },
+      deleteFilter(position) {
+        let { data } = this.get();
+
+        if (data.filters.length === 1) {
+          this.root.fire("alert-notification", {
+            header: "Error",
+            message:
+              "Filters cannot be empty. Add another before deleting the last one or delete the configuration"
+          });
+        } else {
+          data.filters.splice(position, 1);
+          this.set({ data });
+        }
       },
       saveEditor() {
         let { data } = this.get();
@@ -85,3 +92,35 @@
     }
   };
 </script>
+
+<style type="text/scss" scoped>
+  :global(.config-name) {
+    margin-right: 50px !important;
+  }
+  .form-field-container {
+    position: relative;
+    padding-right: 50px;
+    .icon-btn {
+      position: absolute;
+      font-size: 3rem;
+      right: 0px;
+    }
+  }
+
+  .add-new-filter {
+    margin: 0px auto;
+    display: block;
+  }
+  .editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  .editor-actions button {
+    margin: 0px 5px;
+  }
+  .config-name {
+    margin-bottom: 30px;
+    border-bottom: 0px;
+  }
+</style>

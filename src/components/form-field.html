@@ -1,4 +1,4 @@
-<div class="form-field">
+<div class="form-field {classNames}">
   <label>{data.name}</label>
   <span>
     <slot></slot>
@@ -12,6 +12,7 @@
     components: { MultiValueTextBox },
     data() {
       return {
+        classNames: "",
         value: ""
       };
     }

@@ -1,8 +1,5 @@
 <h2>Configuration List</h2>
-{#await configurations}
-	<div class="loading">Loading. Please Wait...</div>
-{:then result}
-	<div class="configuration-container">
+<div class="configuration-container">
 		{#if result && result.length}
 			{#each result as configuration}
 				<ConfigBox config={configuration} />
@@ -11,15 +8,6 @@
 			No Configurations available. Kindle create one.
 		{/if}
 	</div>
-{/await}
-
-<style>
-	.configuration-container {
-	  display: flex;
-	  justify-content: flex-start;
-	  flex-wrap: wrap;
-	}
-</style>
 
 <script>
 	import ConfigBox from "../components/config-box";
@@ -46,3 +34,11 @@
 	  }
 	};
 </script>
+
+<style>
+	.configuration-container {
+	  display: flex;
+	  justify-content: flex-start;
+	  flex-wrap: wrap;
+	}
+</style>

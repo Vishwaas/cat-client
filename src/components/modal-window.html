@@ -1,3 +1,27 @@
+<div class="modal-window {classNames}">
+  <div class="modal-content">
+    <div class="modal-header">
+      <slot name="header"></slot>
+    </div>
+    <div class="modal-body">
+      <slot name="body"></slot>
+    </div>
+    <div class="modal-footer">
+      <slot name="footer"></slot>
+    </div>
+  </div>
+</div>
+
+<script>
+  export default {
+    data() {
+      return {
+        classNames: ""
+      };
+    }
+  };
+</script>
+
 <style scoped type="text/scss">
   .modal-window {
     position: fixed;
@@ -35,21 +59,3 @@
     margin-bottom: 10px;
   }
 </style>
-
-<div class="modal-window">
-  <div class="modal-content">
-    <div class="modal-header">
-      <slot name="header"></slot>
-    </div>
-    <div class="modal-body">
-      <slot name="body"></slot>
-    </div>
-    <div class="modal-footer">
-      <slot name="footer"></slot>
-    </div>
-  </div>
-</div>
-
-<script>
-  export default {};
-</script>

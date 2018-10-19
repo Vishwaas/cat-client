@@ -1,9 +1,9 @@
 <div class="multivalue-textbox">
   <input type="text" class="form-control" bind:value=value />
-  <button on:click="addValueToList()" class="icon-btn add-btn glyphicon glyphicon-plus"></button>
+  <button on:click="addValueToList()" class="icon-btn add-btn glyphicon glyphicon-plus"><span class="sr-only">Add Value</span></button>
   
   {#if values}
-    <div class="value-container">
+    <div class="value-container clearfix">
       {#each values as value, index}
         <ValueNugget on:valueDeletion="removeValueFromList(event.index)"  data={{value, index}}/>
       {/each}
@@ -65,10 +65,10 @@
     }
 
     .value-container {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: space-evenly;
+      .value-nugget {
+        float: left;
+        margin-right: 5px;
+      }
     }
   }
 </style>

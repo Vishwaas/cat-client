@@ -1,0 +1,38 @@
+<div class="loader {isLoadingClass}"></div>
+
+<script>
+  export default {
+    oncreate() {
+      this.root.on("loading", ({ flag }) => {
+        this.set({ isLoading: flag });
+      });
+    },
+    data() {
+      return {
+        isLoading: false
+      };
+    },
+    computed: {
+      isLoadingClass: isLoading => {
+        return isLoading ? "is-loading" : "";
+      }
+    }
+  };
+</script>
+
+<style type="text/scss" scoped>
+  .loader {
+    background: url("../../static/loader.gif");
+    background-position: 50% 50%;
+    background-size: 100px 100px;
+    position: fixed;
+    margin-top: 100px;
+    height: 200px;
+    width: 100%;
+    z-index: 1000000;
+    display: none;
+    &.is-loading {
+      display: block;
+    }
+  }
+</style>

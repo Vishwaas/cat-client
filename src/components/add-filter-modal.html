@@ -1,16 +1,30 @@
 <ModalWindow>
-  <h4 slot="header">Add New Filter</h4>
+  <h3 slot="header">Add New Filter</h3>
   <div slot="body">
-    <FormField data={{name: "Name"}}>
-      <input type="text" class="form-control" bind:value=newFilter.name />
+    <FormField selectedValue={newFilter.id} on:change='onFieldChange()' data={{name: "Field"}}>
+      <SvelteSelect on:change="onFieldChange(event.option)" options={fields} />
     </FormField>
-    <FormField data={{name: "Values"}} >
-      <MultiValueTextBox value={newFilter.values} />
+    <FormField selectedValue={newFilter.id} on:change='onFieldChange()' data={{name: "Field"}}>
+      <SvelteSelect on:change="onFieldChange(event.option)" options={fields} />
+    </FormField>
+    <FormField data={{name: "Name"}}>
+      <input type="text" class="form-control" bind:value=newFilter.displayName />
+    </FormField>
+    {#if newFilter.type.toLowerCase() === 'range'}
+      <FormField data={{name: "Options"}} >
+        <MultiValueTextBox values={newFilter.values} />
+      </FormField>
+    {/if}
+    <FormField on:change='onFormatChange()' data={{name: "Format"}}>
+      <SvelteSelect selectedValue={newFilter.format} on:change="onFormatChange(event.option)" options={formats} />
+    </FormField>
+    <FormField on:change='onTypeChange()' data={{name: "Type"}}>
+      <SvelteSelect selectedValue={newFilter.type} on:change="onTypeChange(event.option)" options={types} />
     </FormField>
   </div>
   <div class="delete-actions" slot="footer">
-    <button on:click="addNewFilter()">Add</button>
-    <button on:click="fire('notifyFilterAddition', {})">Cancel</button>
+    <button class="btn btn-primary" on:click="addNewFilter()">Add</button>
+    <button class="btn btn-default" on:click="fire('notifyFilterAddition', {})">Cancel</button>
   </div>
   <div slot="footer">
     {message}
@@ -20,28 +34,98 @@
 <script>
   import FormField from "./form-field.html";
   import ModalWindow from "./modal-window.html";
-  import MultiValueTextBox from "./multivalue-textbox";
+  import MultiValueTextBox from "./multivalue-textbox.html";
+  import SvelteSelect from "./svelte-select.html";
+  import ConfigService from "../services/config";
 
   export default {
-    components: { FormField, ModalWindow, MultiValueTextBox },
+    components: { FormField, ModalWindow, MultiValueTextBox, SvelteSelect },
     data() {
+      let types = ConfigService.getTypes();
+      let formats = ConfigService.getFormats();
+      let fields = ConfigService.getFields();
+
       return {
         message: "",
         newValue: null,
         newFilter: {
-          name: null,
-          values: []
-        }
+          id: "",
+          label: "",
+          type: "",
+          sortOrder: "2.0",
+          format: "String",
+          values: [
+            {
+              label: "Aerospace & Defense",
+              value: "Aerospace & Defence"
+            },
+            {
+              label: "Insumos Agrícolas",
+              value: "Agricultural Inputs"
+            }
+          ]
+        },
+        fields,
+        types,
+        formats
       };
     },
     methods: {
+      onTypeChange(selectedOption) {
+        let data = this.get();
+        data.newFilter.type = selectedOption.value;
+        this.set({ data });
+      },
+      onFieldChange(selectedOption) {
+        let data = this.get();
+        data.newFilter.id = selectedOption.value;
+        this.set({ data });
+      },
+      onFormatChange() {
+        let data = this.get();
+        data.newFilter.format = selectedOption.value;
+        this.set({ data });
+      },
       isNewFilterValid() {
         let { newFilter } = this.get();
-        return newFilter.name && newFilter.values.length;
+        let validFlag = true;
+        if (
+          !newFilter.id ||
+          !newFilter.label ||
+          !newFilter.type ||
+          !newFilter.format ||
+          !newFilter.sortOrder
+        ) {
+          validFlag = false;
+        } else {
+          if (newFilter.type.toLowerCase === "options") {
+            if (!newFilter.options || !newFilter.options.length) {
+              validFlag = false;
+            } else {
+              newFilter.options.every(option => {
+                if (
+                  !option.label ||
+                  !option.id ||
+                  !option.values ||
+                  !option.values.length
+                ) {
+                  validFlag = false;
+                  return false;
+                }
+              });
+            }
+          } else {
+            if (!newFilter.values || !newFilter.values.length) {
+              validFlag = false;
+            }
+          }
+        }
+
+        return validFlag;
       },
       addNewFilter() {
         if (this.isNewFilterValid()) {
-          let { newFilter, parent } = this.get();
+          let { newFilter } = this.get();
 
           this.set({ message: "" });
           this.fire("notifyFilterAddition", { newFilter });
