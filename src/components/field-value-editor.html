@@ -5,6 +5,7 @@
         isTypeRange
         valueIndex={index}
         bind:value=value
+        on:deleteValue="deleteValue(event.index)"
       />
     {/each}
   {/if}
@@ -14,10 +15,6 @@
       <span class="glyphicon glyphicon-plus-sign"></span>
     </button>
   {/if}
-  <button class="btn btn-primary backward-btn" on:click="fire('back')">
-    Back To Fields
-    <span class="glyphicon glyphicon-backward"></span>
-  </button>
 </div>
 
 <script>
@@ -67,6 +64,11 @@
       addRangeValue() {
         let { field } = this.get();
         field.values.push(Object.assign({}, baseRangeValue));
+        this.set({ field });
+      },
+      deleteValue(index) {
+        let { field } = this.get();
+        field.values.splice(index, 1);
         this.set({ field });
       }
     }

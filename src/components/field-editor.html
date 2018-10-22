@@ -1,43 +1,40 @@
 {#await fields}
     Loading Please Wait
-  {:then result}
-    <FieldValueEditor classNames={showFieldValueEditor ? "show" : "hide"} field={newField} on:back="set({showFieldValueEditor: false})"/>
-    <div class="editor-container {showFieldValueEditor ? "hide" : "show"}">
-      <FormField name="Fields">
-        <SvelteSelect labelKey="display" valueKey="field" prompt="Select field" selectedValue={newField.id || ""} on:change="onFieldChange(event.option)" options={result} />
+{:then result}
+  <div class="editor-container {showFieldValueEditor ? "hide" : "show"}">
+    <FormField name="Fields">
+      <SvelteSelect labelKey="display" valueKey="field" prompt="Select field" selectedValue={newField.id || ""} on:change="onFieldChange(event.option)" options={result} />
+    </FormField>
+    {#if newField && newField.id} 
+      <FormField name="Name">
+        <input type="text" class="form-control" on:blur="updateInput('desc', this.value)" value={newField.desc || ""} />
       </FormField>
-      {#if newField && newField.id} 
-        <FormField name="Name">
-          <input type="text" class="form-control" on:blur="updateInput('desc', this.value)" value={newField.desc || ""} />
-        </FormField>
-        <FormField name="Key">
-          <input type="text" class="form-control" on:blur="updateInput('key', this.value)" value={newField.key || ""} />
-        </FormField>
-        <FormField name="Format">
-          <SvelteSelect valueKey="id" prompt="Select Format" selectedValue={newField.format || ""} on:change="onFormatChange(event.option)" options={formats} />
-        </FormField>
-        <FormField name="Type">
-          <SvelteSelect valueKey="id" prompt="Select Type" selectedValue={newField.type || ""} on:change="onTypeChange(event.option)" options={types} />
-        </FormField>
-        <FormField name="Sort Order">
-          <input type="text" class="form-control" on:blur="updateInput('sortOrder', this.value)" value={newField.sortOrder || ""} />
-        </FormField>
-        <FormField name="Precision">
-          <input type="text" class="form-control" on:blur="updateInput('precision', this.value)" value={newField.precision || ""} />
-        </FormField>
-        <!--FormField data={{name: "Precision"}}>
-          <input type="text" class="form-control" on:blur="updateInput('precision', this.value)" value={newField.precision || ""} />
-        </FormField-->
-        {#if newField && newField.type}
-          <button class="btn btn-primary forward-btn" on:click="showValues()">
-            Edit Values
-            <span class="glyphicon glyphicon-forward"></span>
-          </button>
-        {/if}
+      <FormField name="Key">
+        <input type="text" class="form-control" on:blur="updateInput('key', this.value)" value={newField.key || ""} />
+      </FormField>
+      <FormField name="Format">
+        <SvelteSelect valueKey="id" prompt="Select Format" selectedValue={newField.format || ""} on:change="onFormatChange(event.option)" options={formats} />
+      </FormField>
+      <FormField name="Type">
+        <SvelteSelect valueKey="id" prompt="Select Type" selectedValue={newField.type || ""} on:change="onTypeChange(event.option)" options={types} />
+      </FormField>
+      <FormField name="Sort Order">
+        <input type="text" class="form-control" on:blur="updateInput('sortOrder', this.value)" value={newField.sortOrder || ""} />
+      </FormField>
+      <FormField name="Precision">
+        <input type="text" class="form-control" on:blur="updateInput('precision', this.value)" value={newField.precision || ""} />
+      </FormField>
+      
+      <!--FormField data={{name: "Precision"}}>
+        <input type="text" class="form-control" on:blur="updateInput('precision', this.value)" value={newField.precision || ""} />
+      </FormField-->
+      {#if newField && newField.type}
+        <FieldValueEditor classNames={showFieldValueEditor ? "hide" : "show"} field={newField} on:back="set({showFieldValueEditor: false})"/>
       {/if}
-    </div>
-    
-  {/await}
+    {/if}
+  </div>
+  
+{/await}
 
 <script>
   import FormField from "./form-field.html";

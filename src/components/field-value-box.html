@@ -8,6 +8,7 @@
   <input type="text" placeholder="Description" class="form-control" bind:value=value.desc disabled={isReadOnly ? disabled : ''} />
   <input type="text" placeholder="Sort Order"  class="form-control" bind:value=valueIndex disabled={isReadOnly ? disabled : ''} />
   <input type="text" placeholder="ID" class="form-control" bind:value=valueIndex disabled/>
+  <button data-toggle="tooltip" title="Delete Value" on:click="fire('deleteValue', {index: valueIndex})" class="icon-btn glyphicon glyphicon-remove-circle"></button>
 </div>
 
 <script>
@@ -30,7 +31,7 @@
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
-    padding: 5px 0px;
+    padding: 5px 30px 5px 5px;
     margin: 5px 0px;
     input {
       margin: 0px 5px;
