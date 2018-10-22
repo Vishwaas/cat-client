@@ -16,6 +16,7 @@
   import FormField from "./form-field.html";
   import ModalWindow from "./modal-window.html";
   import FieldEditor from "./field-editor.html";
+  import Validator from "../utils/validator";
 
   export default {
     components: { FormField, ModalWindow, FieldEditor, FieldValueEditor },
@@ -28,47 +29,9 @@
       };
     },
     methods: {
-      isnewFieldValid() {
-        let { newField } = this.get();
-        let validFlag = true;
-        if (
-          !newField.id ||
-          !newField.label ||
-          !newField.type ||
-          !newField.format ||
-          !newField.sortOrder
-        ) {
-          validFlag = false;
-        } else {
-          if (newField.type.toLowerCase === "options") {
-            if (!newField.options || !newField.options.length) {
-              validFlag = false;
-            } else {
-              newField.options.every(option => {
-                if (
-                  !option.label ||
-                  !option.id ||
-                  !option.values ||
-                  !option.values.length
-                ) {
-                  validFlag = false;
-                  return false;
-                }
-              });
-            }
-          } else {
-            if (!newField.values || !newField.values.length) {
-              validFlag = false;
-            }
-          }
-        }
-
-        return validFlag;
-      },
       addnewField() {
-        if (this.isnewFieldValid()) {
-          let { newField } = this.get();
-
+        let { newField } = this.get();
+        if (Validator.isFieldValid(newField)) {
           this.set({ message: "" });
           this.fire("notifyFieldAddition", { newField });
         } else {

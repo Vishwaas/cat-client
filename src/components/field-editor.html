@@ -1,35 +1,32 @@
 {#await fields}
     Loading Please Wait
   {:then result}
-    {#if showFieldValueEditor}
-      <FieldValueEditor values={newField.values} on:back="set({showFieldValueEditor: false})"/>
-    {:else}
+    <FieldValueEditor classNames={showFieldValueEditor ? "show" : "hide"} field={newField} on:back="set({showFieldValueEditor: false})"/>
+    <div class="editor-container {showFieldValueEditor ? "hide" : "show"}">
       <FormField data={{name: "Fields"}}>
-        <SvelteSelect labelKey="display" valueKey="field" prompt="Select field" on:change="onFieldChange(event.option)" options={result} />
+        <SvelteSelect labelKey="display" valueKey="field" prompt="Select field" selectedValue={newField.id || ""} on:change="onFieldChange(event.option)" options={result} />
       </FormField>
-      <FormField data={{name: "Name"}}>
-        <input type="text" class="form-control" on:blur="updateInput('desc', this.value)" value={newField.desc || ""} />
-      </FormField>
-      {#if newField.type && newField.type.toLowerCase() === 'range'}
-        <FormField data={{name: "Options"}} >
-          <MultiValueTextBox values={newField.values} />
+      {#if newField && newField.id} 
+        <FormField data={{name: "Name"}}>
+          <input type="text" class="form-control" on:blur="updateInput('desc', this.value)" value={newField.desc || ""} />
         </FormField>
+        <FormField data={{name: "Format"}}>
+          <SvelteSelect valueKey="id" prompt="Select Format" selectedValue={newField.format || ""} on:change="onFormatChange(event.option)" options={formats} />
+        </FormField>
+        <FormField data={{name: "Type"}}>
+          <SvelteSelect valueKey="id" prompt="Select Type" selectedValue={newField.type || ""} on:change="onTypeChange(event.option)" options={types} />
+        </FormField>
+        <FormField data={{name: "Sort Order"}}>
+          <input type="text" class="form-control" on:blur="updateInput('sortOrder', this.value)" value={newField.sortOrder || ""} />
+        </FormField>
+        {#if newField && newField.type}
+          <button class="btn btn-primary forward-btn" on:click="showValues()">
+            Edit Values
+            <span class="glyphicon glyphicon-forward"></span>
+          </button>
+        {/if}
       {/if}
-      <FormField data={{name: "Format"}}>
-        <SvelteSelect selectedValue={newField.format || ""} on:change="onFormatChange(event.option)" options={formats} />
-      </FormField>
-      <FormField data={{name: "Type"}}>
-        <SvelteSelect selectedValue={newField.type || ""} on:change="onTypeChange(event.option)" options={types} />
-      </FormField>
-      <FormField data={{name: "Sort Order"}}>
-        <input type="text" class="form-control" on:blur="updateInput('sortOrder', this.value)" value={newField.sortOrder || ""} />
-      </FormField>
-      <button class="btn btn-primary forward-btn" on:click="set({showFieldValueEditor: true})">
-        Edit Values
-        <span class="glyphicon glyphicon-forward"></span>
-      </button>
-      
-    {/if}
+    </div>
     
   {/await}
 
@@ -67,29 +64,52 @@
     computed: {
       fields: ({ selectedScreener }) => {
         return ConfigService.getFields(selectedScreener.screenId);
+      },
+      editorClass: ({ showFieldValueEditor }) => {
+        return showFieldValueEditor ? "show-value-editor" : "show-field-editor";
       }
     },
     methods: {
-      onTypeChange(selectedOption) {
+      onTypeChange(selectedType) {
         let data = this.get();
-        data.newField.type = selectedOption.value;
+        data.newField.type = selectedType.id;
         this.set({ data });
       },
-      onFieldChange(selectedOption) {
+      onFieldChange(selectedField) {
         let data = this.get();
-        data.newField.id = selectedOption.value;
+        data.newField.desc = selectedField.display;
+        data.newField.id = selectedField.field;
         this.set({ data });
       },
-      onFormatChange(selectedOption) {
+      onFormatChange(selectedFormat) {
         let data = this.get();
-        data.newField.format = selectedOption.value;
+        data.newField.format = selectedFormat.id;
         this.set({ data });
       },
       updateInput(prop, value) {
         let data = this.get();
         data.newField[prop] = value;
         this.set({ data });
+      },
+      showValues() {
+        let { newField } = this.get();
+        if (!(newField.values && newField.values.length)) {
+          newField.values = [];
+        }
+        this.set({ showFieldValueEditor: true, newField });
       }
     }
   };
 </script>
+<style scoped type="text/scss">
+  .forward-btn {
+    float: right;
+  }
+  .editor-container {
+    display: none;
+    &.show-value-editor,
+    &.show-field-editor {
+      display: block;
+    }
+  }
+</style>

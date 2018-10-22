@@ -1,7 +1,25 @@
-<button class="btn btn-primary backward-btn" on:click="fire('back')">
-  Back To Fields
-  <span class="glyphicon glyphicon-backward"></span>
-</button>
+<div class="editor-container {classNames}">
+  {#if field && field.type === 'Range'}
+    {#each field.values as value, index}
+      <div class="value-container">
+        <input type="text" placeholder="Low" class="form-control" bind:value=value.low />
+        <input type="text" placeholder="High" class="form-control" bind:value=value.high />
+        <input type="text" placeholder="Description" class="form-control" bind:value=value.desc />
+        <input type="text" placeholder="Sort Order"  class="form-control" bind:value=index />
+        <input type="text" placeholder="ID" class="form-control" bind:value=index disabled/>
+      </div>
+    {/each}
+    <button on:click="addRangeValue()" class="btn btn-primary add-range-value">
+      Add Range Value
+      <span class="glyphicon glyphicon-plus-sign"></span>
+    </button>
+  {:else}
+  {/if}
+  <button class="btn btn-primary backward-btn" on:click="fire('back')">
+    Back To Fields
+    <span class="glyphicon glyphicon-backward"></span>
+  </button>
+</div>
 
 <script>
   import FormField from "./form-field.html";
@@ -9,16 +27,63 @@
   import SvelteSelect from "./svelte-select.html";
   import ConfigService from "../services/config";
 
+  const baseRangeValue = {
+    low: "",
+    high: "",
+    desc: "",
+    id: -1,
+    sortOrder: -1
+  };
+
+  const baseValue = {
+    key: "",
+    desc: "",
+    id: -1,
+    sortOrder: -1
+  };
+
   export default {
     components: { FormField, MultiValueTextBox, SvelteSelect },
 
+    oncreate() {
+      let { field } = this.options.data;
+      if (!(field.values && field.values.length)) {
+        field.values = [];
+      }
+      this.set({ field });
+    },
+
     data() {
       return {
-        key: "AEROSPACE_DEFENCE",
-        desc: "Aerospace & Defence",
-        id: 3302,
-        sortOrder: 2
+        classNames: "",
+        field: {
+          values: []
+        }
       };
+    },
+    methods: {
+      addRangeValue() {
+        let { field } = this.get();
+        field.values.push(Object.assign({}, baseRangeValue));
+        this.set({ field });
+      }
     }
   };
 </script>
+
+<style type="text/scss" scoped>
+  .value-container {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    padding: 5px 0px;
+    margin: 5px 0px;
+    input {
+      margin: 0px 5px;
+    }
+  }
+  .add-range-value {
+    display: block;
+    margin: 0px auto;
+  }
+</style>

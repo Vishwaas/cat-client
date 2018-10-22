@@ -1,6 +1,6 @@
-<select class="form-control" on:change="selectOption()">
+<select ref:select class="form-control" on:change="selectOption()">
   {#if prompt}
-    <option>{prompt}</option>
+    <option value="">{prompt}</option>
   {/if}
   {#each options as option, index}
     {#if selectedValue === option.value} 
@@ -29,7 +29,7 @@
     methods: {
       selectOption() {
         let { labelKey, valueKey } = this.get();
-        let $selectedOption = $("select :selected");
+        let $selectedOption = $(this.refs.select).find(":selected");
         let option = {};
         option[labelKey] = $selectedOption.text();
         option[valueKey] = $selectedOption.val();
