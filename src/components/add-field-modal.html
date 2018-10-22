@@ -1,0 +1,83 @@
+<ModalWindow>
+  <h3 slot="header">Add New Field</h3>
+  <div slot="body">
+    <FieldEditor onEdit="" selectedScreener={selectedScreener} newField={newField}/>
+  </div>
+  <div class="delete-actions" slot="footer">
+    <button class="btn btn-primary" on:click="addnewField()">Add</button>
+    <button class="btn btn-default" on:click="fire('notifyFieldAddition', {})">Cancel</button>
+  </div>
+  <div slot="footer">
+    {message}
+  </div>
+</ModalWindow>
+
+<script>
+  import FormField from "./form-field.html";
+  import ModalWindow from "./modal-window.html";
+  import FieldEditor from "./field-editor.html";
+
+  export default {
+    components: { FormField, ModalWindow, FieldEditor, FieldValueEditor },
+
+    data() {
+      return {
+        selectedScreener: {},
+        message: "",
+        newField: {}
+      };
+    },
+    methods: {
+      isnewFieldValid() {
+        let { newField } = this.get();
+        let validFlag = true;
+        if (
+          !newField.id ||
+          !newField.label ||
+          !newField.type ||
+          !newField.format ||
+          !newField.sortOrder
+        ) {
+          validFlag = false;
+        } else {
+          if (newField.type.toLowerCase === "options") {
+            if (!newField.options || !newField.options.length) {
+              validFlag = false;
+            } else {
+              newField.options.every(option => {
+                if (
+                  !option.label ||
+                  !option.id ||
+                  !option.values ||
+                  !option.values.length
+                ) {
+                  validFlag = false;
+                  return false;
+                }
+              });
+            }
+          } else {
+            if (!newField.values || !newField.values.length) {
+              validFlag = false;
+            }
+          }
+        }
+
+        return validFlag;
+      },
+      addnewField() {
+        if (this.isnewFieldValid()) {
+          let { newField } = this.get();
+
+          this.set({ message: "" });
+          this.fire("notifyFieldAddition", { newField });
+        } else {
+          this.set({
+            message:
+              "Invalid entry/entries. Make sure name and values are not empty"
+          });
+        }
+      }
+    }
+  };
+</script>

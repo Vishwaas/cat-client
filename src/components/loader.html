@@ -13,8 +13,9 @@
       };
     },
     computed: {
-      isLoadingClass: isLoading => {
-        return isLoading ? "is-loading" : "";
+      isLoadingClass: ({ isLoading }) => {
+        let name = isLoading ? "is-loading" : "";
+        return name;
       }
     }
   };
@@ -22,17 +23,30 @@
 
 <style type="text/scss" scoped>
   .loader {
-    background: url("../../static/loader.gif");
-    background-position: 50% 50%;
-    background-size: 100px 100px;
-    position: fixed;
-    margin-top: 100px;
-    height: 200px;
-    width: 100%;
-    z-index: 1000000;
     display: none;
     &.is-loading {
       display: block;
+      &::before {
+        content: " ";
+        //background-color: rgba(0, 0, 0, 0.6);
+        width: 3000px;
+        height: 3000px;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        z-index: 100000;
+      }
+      &::after {
+        background: url("../../loader.gif");
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
+        position: fixed;
+        margin-top: 100px;
+        height: 200px;
+        width: 100%;
+        z-index: 1000000;
+        content: " ";
+      }
     }
   }
 </style>

@@ -1,84 +1,115 @@
 <div class="config-editor">
-  <FormField bind:value=data.name classNames="config-name" data={{name: "Name"}}>
-    <input type="text" class="form-control" bind:value=data.name />
+  <FormField data={{name: "Screeners"}}>
+    {#if isNew}
+      <SvelteSelect 
+        labelKey="screenName" 
+        valueKey="screenId"
+        selectedValue={selectedScreener}  
+        on:change="onScreenerChange(event.option)" 
+        options={screeners} 
+        prompt="Select Screener"
+      />
+    {:else}
+      <input type="text" class="form-control" value={selectedScreener.screenName} />
+    {/if}
   </FormField>
+  
+  {#if selectedScreener && selectedScreener.screenId}
+    <FormField bind:value=data.name classNames="config-name" data={{name: "Name"}}>
+      <input type="text" class="form-control" bind:value=data.name />
+    </FormField>
 
-  {#if data && data.filters}
-    {#each data.filters as filter, index}
-      <div class="form-field-container">
-        <FormField classNames="filter-row" data={{name: filter.name}} >
-          <MultiValueTextBox values={filter.values} />
-        </FormField>
-        <button data-toggle="tooltip" title="Delete Filter" on:click="deleteFilter(index)" class="icon-btn glyphicon glyphicon-remove-circle"></button>
-      </div>
-    {/each}
+    {#if data && data.fields}
+      {#each data.fields as field, index}
+        <div class="form-field-container">
+          <FormField classNames="field-row" data={{name: field.name}} >
+            <MultiValueTextBox values={field.values} />
+          </FormField>
+          <button data-toggle="tooltip" title="Delete Field" on:click="deleteField(index)" class="icon-btn glyphicon glyphicon-remove-circle"></button>
+        </div>
+      {/each}
+    {/if}
+    <button on:click="set({showAddField: true})" class="btn btn-primary add-new-field">
+      Add New Field 
+      <span class="glyphicon glyphicon-plus-sign"></span>
+    </button>
+
+    <div class="editor-actions">
+      <button class="btn btn-primary" on:click="saveEditor()">Save</button>
+      <button class="btn btn-default" on:click="cancelEditor()">Cancel</button>
+    </div>
   {/if}
-  <button on:click="set({showAddFilter: true})" class="btn btn-primary add-new-filter">
-    Add New Filter 
-    <span class="glyphicon glyphicon-plus-sign"></span>
-  </button>
 
-  <div class="editor-actions">
-    <button class="btn btn-primary" on:click="saveEditor()">Save</button>
-    <button class="btn btn-default" on:click="cancelEditor()">Cancel</button>
-  </div>
-
-  {#if showAddFilter}
-    <AddFilterModal on:notifyFilterAddition="updateFilterAddition(event.newFilter)"/>
+  {#if showAddField}
+    <AddFieldModal selectedScreener={selectedScreener} on:notifyFieldAddition="updateFieldAddition(event.newField)"/>
   {/if}
 </div>
 
 <script>
   import FormField from "./form-field.html";
   import ModalWindow from "./modal-window.html";
-  import AddFilterModal from "./add-filter-modal.html";
+  import AddFieldModal from "./add-field-modal.html";
   import MultiValueTextBox from "./multivalue-textbox.html";
   import * as sapper from "../../__sapper__/client.js";
+  import SvelteSelect from "./svelte-select.html";
+  import ConfigService from "../services/config";
 
   export default {
     components: {
       FormField,
-      AddFilterModal,
-      MultiValueTextBox
+      AddFieldModal,
+      MultiValueTextBox,
+      SvelteSelect
     },
     data() {
+      let screeners = ConfigService.getScreeners();
       return {
-        showAddFilter: false,
+        selectedScreener: {},
+        screeners,
+        showAddField: false,
         data: {
           name: "",
-          filters: []
+          fields: []
         }
       };
     },
+    computed: {
+      isNew: data => {
+        return !(data.name && data.fields && data.fields.length);
+      }
+    },
     methods: {
-      updateFilterAddition(newFilter) {
-        if (newFilter) {
+      onScreenerChange(screener) {
+        this.set({ selectedScreener: screener });
+      },
+      updateFieldAddition(newField) {
+        if (newField) {
           let { data } = this.get();
-          data.filters.push(newFilter);
+          data.fields.push(newField);
           this.set({ data: data });
         }
-        this.set({ showAddFilter: false });
+        this.set({ showAddField: false });
       },
-      deleteFilter(position) {
+      deleteField(position) {
         let { data } = this.get();
 
-        if (data.filters.length === 1) {
+        if (data.fields.length === 1) {
           this.root.fire("alert-notification", {
             header: "Error",
             message:
-              "Filters cannot be empty. Add another before deleting the last one or delete the configuration"
+              "Fields cannot be empty. Add another before deleting the last one or delete the configuration"
           });
         } else {
-          data.filters.splice(position, 1);
+          data.fields.splice(position, 1);
           this.set({ data });
         }
       },
       saveEditor() {
         let { data } = this.get();
-        if (!(data.name && data.filters && data.filters.length)) {
+        if (!(data.name && data.fields && data.fields.length)) {
           this.root.fire("alert-notification", {
             header: "Invalid Input",
-            message: "Make sure configuration has name and filter values"
+            message: "Make sure configuration has name and field values"
           });
           return;
         }
@@ -94,9 +125,6 @@
 </script>
 
 <style type="text/scss" scoped>
-  :global(.config-name) {
-    margin-right: 50px !important;
-  }
   .form-field-container {
     position: relative;
     padding-right: 50px;
@@ -107,7 +135,7 @@
     }
   }
 
-  .add-new-filter {
+  .add-new-field {
     margin: 0px auto;
     display: block;
   }

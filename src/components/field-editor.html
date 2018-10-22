@@ -1,0 +1,95 @@
+{#await fields}
+    Loading Please Wait
+  {:then result}
+    {#if showFieldValueEditor}
+      <FieldValueEditor values={newField.values} on:back="set({showFieldValueEditor: false})"/>
+    {:else}
+      <FormField data={{name: "Fields"}}>
+        <SvelteSelect labelKey="display" valueKey="field" prompt="Select field" on:change="onFieldChange(event.option)" options={result} />
+      </FormField>
+      <FormField data={{name: "Name"}}>
+        <input type="text" class="form-control" on:blur="updateInput('desc', this.value)" value={newField.desc || ""} />
+      </FormField>
+      {#if newField.type && newField.type.toLowerCase() === 'range'}
+        <FormField data={{name: "Options"}} >
+          <MultiValueTextBox values={newField.values} />
+        </FormField>
+      {/if}
+      <FormField data={{name: "Format"}}>
+        <SvelteSelect selectedValue={newField.format || ""} on:change="onFormatChange(event.option)" options={formats} />
+      </FormField>
+      <FormField data={{name: "Type"}}>
+        <SvelteSelect selectedValue={newField.type || ""} on:change="onTypeChange(event.option)" options={types} />
+      </FormField>
+      <FormField data={{name: "Sort Order"}}>
+        <input type="text" class="form-control" on:blur="updateInput('sortOrder', this.value)" value={newField.sortOrder || ""} />
+      </FormField>
+      <button class="btn btn-primary forward-btn" on:click="set({showFieldValueEditor: true})">
+        Edit Values
+        <span class="glyphicon glyphicon-forward"></span>
+      </button>
+      
+    {/if}
+    
+  {/await}
+
+<script>
+  import FormField from "./form-field.html";
+  import MultiValueTextBox from "./multivalue-textbox.html";
+  import SvelteSelect from "./svelte-select.html";
+  import ConfigService from "../services/config";
+  import FieldValueEditor from "./field-value-editor.html";
+
+  const baseField = {
+    id: "",
+    key: "",
+    desc: "a",
+    type: "",
+    sortOrder: "",
+    format: "",
+    values: []
+  };
+
+  export default {
+    components: { FormField, SvelteSelect, MultiValueTextBox, FieldValueEditor },
+
+    data() {
+      let types = ConfigService.getTypes();
+      let formats = ConfigService.getFormats();
+
+      return {
+        newField: baseField,
+        types,
+        formats,
+        showFieldValueEditor: false
+      };
+    },
+    computed: {
+      fields: ({ selectedScreener }) => {
+        return ConfigService.getFields(selectedScreener.screenId);
+      }
+    },
+    methods: {
+      onTypeChange(selectedOption) {
+        let data = this.get();
+        data.newField.type = selectedOption.value;
+        this.set({ data });
+      },
+      onFieldChange(selectedOption) {
+        let data = this.get();
+        data.newField.id = selectedOption.value;
+        this.set({ data });
+      },
+      onFormatChange(selectedOption) {
+        let data = this.get();
+        data.newField.format = selectedOption.value;
+        this.set({ data });
+      },
+      updateInput(prop, value) {
+        let data = this.get();
+        data.newField[prop] = value;
+        this.set({ data });
+      }
+    }
+  };
+</script>

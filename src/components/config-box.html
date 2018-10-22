@@ -5,12 +5,12 @@
     <button class="glyphicon glyphicon-trash icon-btn" on:click="set({showDeleteModal: true})" title="Delete {config.name}" slot="actions" ></button>
   </ActionableHeader>
 
-  <div class="filter-list">
-    {#each topTwoFilters as filter}
-      <div class="filter-row">
-        <span>{filter.name}</span>
+  <div class="field-list">
+    {#each topTwoFields as field}
+      <div class="field-row">
+        <span>{field.name}</span>
         <span>
-          {(filter.values || []).join(',')}
+          {(field.values || []).join(',')}
         </span>
       </div>
     {/each}
@@ -31,12 +31,12 @@
 {#if showDetails}
   <ModalWindow>
     <h4 slot="header">{config.name}</h4>
-    <p slot="body" class="filter-list">
-      {#each config.filters as filter}
-          <div class="filter-row">
-            <span>{filter.name}</span>
+    <p slot="body" class="field-list">
+      {#each config.fields as field}
+          <div class="field-row">
+            <span>{field.name}</span>
             <span>
-              {(filter.values || []).join(',')}
+              {(field.values || []).join(',')}
             </span>
           </div>
         {/each}
@@ -59,8 +59,8 @@
       ModalWindow
     },
     computed: {
-      topTwoFilters: ({ config }) => {
-        return config.filters.slice(0, 2);
+      topTwoFields: ({ config }) => {
+        return config.fields.slice(0, 2);
       }
     },
     methods: {
@@ -98,7 +98,7 @@
       return {
         showDeleteModal: false,
         config: {
-          filters: []
+          fields: []
         }
       };
     }
@@ -130,7 +130,7 @@
     }
   }
 
-  .filter-row {
+  .field-row {
     display: flex;
     justify-content: space-between;
     align-content: center;

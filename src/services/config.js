@@ -5,13 +5,13 @@ import $ from 'jquery';
 let fields = [];
 let screeners = [];
 
-function fetchScreenerFields() {
+function fetchScreenerFields(screenerId) {
 	return new Promise(resolve => {
 		$.ajax({
-			url: 'http://ddt-acc.markit.partners/screener-api/v1/screens/302/fields',
+			url: `http://ddt-acc.markit.partners/screener-api/v1/screens/${screenerId}/fields`,
 			type: 'GET'
-		}).done(data => {
-			resolve(JSON.parse(data));
+		}).done(response => {
+			resolve(response.data);
 		});
 	});
 }
@@ -19,10 +19,10 @@ function fetchScreenerFields() {
 function fetchScreeners() {
 	return new Promise(resolve => {
 		$.ajax({
-			url: 'http://ddt-acc.markit.partners/screener-api/v1/screens',
+			url: 'http://localhost:3000/v1/screeners',
 			type: 'GET'
 		}).done(response => {
-			resolve(JSON.parse(response.data.items));
+			resolve(response.data.items);
 		});
 	});
 }
@@ -36,14 +36,17 @@ export default {
 		return configFormats;
 	},
 
-	getFields() {
-		return fields;
+	getFields(screenerId) {
+		return fetchScreenerFields(screenerId);
+	},
+
+	getScreeners() {
+		return screeners;
 	},
 
 	initialize() {
-		fetchScreenerFields().then(fields => {
-			fields = fields;
+		fetchScreeners().then(result => {
+			screeners = result;
 		});
-		fetchScreeners().then(screeners => {});
 	}
 };

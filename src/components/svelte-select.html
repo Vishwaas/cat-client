@@ -1,12 +1,12 @@
-<select class="form-control" on:select="selectOption()">
+<select class="form-control" on:change="selectOption()">
   {#if prompt}
     <option>{prompt}</option>
   {/if}
   {#each options as option, index}
     {#if selectedValue === option.value} 
-      <option data-index={index} value={option.value} selected}>{option.label}</option>
+      <option data-index={index} value={option[valueKey]} selected}>{option[labelKey]}</option>
     {:else}
-      <option data-index={index} value={option.value}>{option.label}</option>
+      <option data-index={index} value={option[valueKey]}>{option[labelKey]}</option>
     {/if}
    
   {/each}
@@ -19,19 +19,23 @@
     data() {
       return {
         prompt: "",
-        selectedValue: {}
+        labelKey: "label",
+        valueKey: "value",
+        selectedValue: {},
+        options: []
       };
     },
 
     methods: {
       selectOption() {
+        let { labelKey, valueKey } = this.get();
         let $selectedOption = $("select :selected");
-        let option = {
-          label: $selectedOption.text(),
-          value: $selectedOption.val(),
-          index: $selectedOption.data("index")
-        };
-        this.fire("change", option);
+        let option = {};
+        option[labelKey] = $selectedOption.text();
+        option[valueKey] = $selectedOption.val();
+        option.index = $selectedOption.data("index");
+
+        this.fire("change", { option });
       }
     }
   };

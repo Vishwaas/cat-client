@@ -1,7 +1,7 @@
 <h2>Configuration List</h2>
 <div class="configuration-container">
-		{#if result && result.length}
-			{#each result as configuration}
+		{#if configurations && configurations.length}
+			{#each configurations as configuration}
 				<ConfigBox config={configuration} />
 			{/each}
 		{:else}
