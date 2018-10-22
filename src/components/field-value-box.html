@@ -1,0 +1,39 @@
+<div class="field-value-box">
+  {#if isTypeRange}
+    <input type="text" placeholder="Low" class="form-control" bind:value=value.low disabled={isReadOnly ? disabled : ''} />
+    <input type="text" placeholder="High" class="form-control" bind:value=value.high disabled={isReadOnly ? disabled : ''} />
+  {:else}
+    <input type="text" placeholder="Key" class="form-control" bind:value=value.key disabled={isReadOnly ? disabled : ''} />
+  {/if}
+  <input type="text" placeholder="Description" class="form-control" bind:value=value.desc disabled={isReadOnly ? disabled : ''} />
+  <input type="text" placeholder="Sort Order"  class="form-control" bind:value=valueIndex disabled={isReadOnly ? disabled : ''} />
+  <input type="text" placeholder="ID" class="form-control" bind:value=valueIndex disabled/>
+</div>
+
+<script>
+  import $ from "jquery";
+
+  export default {
+    data() {
+      return {
+        isReadOnly: false,
+        isTypeRange: false,
+        value: {},
+        valueIndex: -1
+      };
+    }
+  };
+</script>
+
+<style type="text/scss" scoped>
+  .field-value-box {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    padding: 5px 0px;
+    margin: 5px 0px;
+    input {
+      margin: 0px 5px;
+    }
+  }
+</style>

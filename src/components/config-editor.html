@@ -1,5 +1,5 @@
 <div class="config-editor">
-  <FormField data={{name: "Screeners"}}>
+  <FormField name="Screeners">
     {#if isNew}
       <SvelteSelect 
         labelKey="screenName" 
@@ -15,18 +15,14 @@
   </FormField>
   
   {#if selectedScreener && selectedScreener.screenId}
-    <FormField bind:value=data.name classNames="config-name" data={{name: "Name"}}>
-      <input type="text" class="form-control" bind:value=data.name />
+    <FormField classNames="config-name" name="Name">
+      <input type="text" class="form-control" bind:value=configuration.name />
     </FormField>
 
-    {#if data && data.fields}
-      {#each data.fields as field, index}
-        <div class="form-field-container">
-          <FormField classNames="field-row" data={{name: field.name}} >
-            <MultiValueTextBox values={field.values} />
-          </FormField>
-          <button data-toggle="tooltip" title="Delete Field" on:click="deleteField(index)" class="icon-btn glyphicon glyphicon-remove-circle"></button>
-        </div>
+    {#if configuration && configuration.fields}
+      {#each configuration.fields as field, index}
+        {JSON.stringify(field)}
+        <FieldBox field={field} />
       {/each}
     {/if}
     <button on:click="set({showAddField: true})" class="btn btn-primary add-new-field">
@@ -53,13 +49,16 @@
   import * as sapper from "../../__sapper__/client.js";
   import SvelteSelect from "./svelte-select.html";
   import ConfigService from "../services/config";
+  import Validator from "../utils/validator";
+  import FieldBox from "./field-box.html";
 
   export default {
     components: {
       FormField,
       AddFieldModal,
       MultiValueTextBox,
-      SvelteSelect
+      SvelteSelect,
+      FieldBox
     },
     data() {
       let screeners = ConfigService.getScreeners();
@@ -67,55 +66,62 @@
         selectedScreener: {},
         screeners,
         showAddField: false,
-        data: {
+        configuration: {
+          screenerId: "",
           name: "",
           fields: []
         }
       };
     },
     computed: {
-      isNew: data => {
-        return !(data.name && data.fields && data.fields.length);
+      isNew: ({ configuration }) => {
+        return !(
+          configuration.name &&
+          configuration.fields &&
+          configuration.fields.length
+        );
       }
     },
     methods: {
       onScreenerChange(screener) {
-        this.set({ selectedScreener: screener });
+        let { configuration } = this.get();
+        configuration.screenerId = screener.screenId;
+        this.set({ selectedScreener: screener, configuration });
       },
       updateFieldAddition(newField) {
         if (newField) {
-          let { data } = this.get();
-          data.fields.push(newField);
-          this.set({ data: data });
+          let { configuration } = this.get();
+          configuration.fields.push(newField);
+          this.set({ configuration });
         }
         this.set({ showAddField: false });
       },
       deleteField(position) {
-        let { data } = this.get();
+        let { configuration } = this.get();
 
-        if (data.fields.length === 1) {
+        if (configuration.fields.length === 1) {
           this.root.fire("alert-notification", {
             header: "Error",
             message:
               "Fields cannot be empty. Add another before deleting the last one or delete the configuration"
           });
         } else {
-          data.fields.splice(position, 1);
-          this.set({ data });
+          configuration.fields.splice(position, 1);
+          this.set({ configuration });
         }
       },
       saveEditor() {
-        let { data } = this.get();
-        if (!(data.name && data.fields && data.fields.length)) {
+        let { configuration } = this.get();
+        if (!Validator.isConfigValid(configuration)) {
           this.root.fire("alert-notification", {
             header: "Invalid Input",
-            message: "Make sure configuration has name and field values"
+            message: "Make sure configuration has all data filled."
           });
-          return;
+        } else {
+          this.fire("saveConfig", {
+            config: configuration
+          });
         }
-        this.fire("saveConfig", {
-          config: data
-        });
       },
       cancelEditor() {
         sapper.goto("/");

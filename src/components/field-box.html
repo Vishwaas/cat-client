@@ -1,0 +1,99 @@
+<div class="field-box {isCollapsed ? 'collapsed': ''} {classNames}">
+  <button on:click="toggleCollapse()" class="btn btn-default header">
+    <FormField classNames="inline" name="Description: ">
+      {field.desc}
+    </FormField>
+    <FormField classNames="inline" name="Type: ">
+      {field.type}
+    </FormField>
+  </button>
+  <div class="body">
+    <div class="field-container">
+      <FormField classNames="inline" name="ID: ">
+        {field.id}
+      </FormField>
+      <FormField classNames="inline" name="Key: ">
+        {field.key}
+      </FormField>
+      <FormField classNames="inline" name="Format: ">
+        {field.format}
+      </FormField>
+      <FormField classNames="inline" name="Sort Order: ">
+        {field.sortOrder}
+      </FormField>
+      <FormField classNames="inline" name="Precision: ">
+        {field.precision}
+      </FormField>
+    </div>
+    {#if field.values}
+      {#each field.values as value, index}
+        <FieldValueBox 
+          isReadOnly=true
+          isTypeRange
+          value
+        />
+      {/each}
+    {/if}
+  </div>
+</div>
+
+<script>
+  import $ from "jquery";
+  import FormField from "./form-field.html";
+  import FieldValueBox from "./field-value-box.html";
+
+  export default {
+    components: {
+      FormField,
+      FieldValueBox
+    },
+
+    data() {
+      return {
+        isCollapsed: true,
+        classNames: "",
+        field: {}
+      };
+    },
+
+    methods: {
+      toggleCollapse() {
+        let { isCollapsed } = this.get();
+        this.set({ isCollapsed: !isCollapsed });
+      }
+    }
+  };
+</script>
+
+<style type="text/scss" scoped>
+  .field-box {
+    border: 1px solid gray;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    width: 100%;
+    overflow: hidden;
+    :global(.form-field.inline) {
+      margin-bottom: 0px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      height: 35px;
+      flex-wrap: wrap;
+      width: 100%;
+      padding: 0px;
+    }
+    .body {
+      max-height: 300px;
+      overflow-y: auto;
+      .field-container {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    &.collapsed .body {
+      display: none;
+    }
+  }
+</style>

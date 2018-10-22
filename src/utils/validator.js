@@ -27,6 +27,7 @@ function isFieldValid(field) {
 		!field.desc ||
 		!field.type ||
 		!field.format ||
+		!field.key ||
 		!field.sortOrder ||
 		(field.type !== 'Range' && !field.key)
 	) {

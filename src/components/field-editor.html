@@ -3,22 +3,31 @@
   {:then result}
     <FieldValueEditor classNames={showFieldValueEditor ? "show" : "hide"} field={newField} on:back="set({showFieldValueEditor: false})"/>
     <div class="editor-container {showFieldValueEditor ? "hide" : "show"}">
-      <FormField data={{name: "Fields"}}>
+      <FormField name="Fields">
         <SvelteSelect labelKey="display" valueKey="field" prompt="Select field" selectedValue={newField.id || ""} on:change="onFieldChange(event.option)" options={result} />
       </FormField>
       {#if newField && newField.id} 
-        <FormField data={{name: "Name"}}>
+        <FormField name="Name">
           <input type="text" class="form-control" on:blur="updateInput('desc', this.value)" value={newField.desc || ""} />
         </FormField>
-        <FormField data={{name: "Format"}}>
+        <FormField name="Key">
+          <input type="text" class="form-control" on:blur="updateInput('key', this.value)" value={newField.key || ""} />
+        </FormField>
+        <FormField name="Format">
           <SvelteSelect valueKey="id" prompt="Select Format" selectedValue={newField.format || ""} on:change="onFormatChange(event.option)" options={formats} />
         </FormField>
-        <FormField data={{name: "Type"}}>
+        <FormField name="Type">
           <SvelteSelect valueKey="id" prompt="Select Type" selectedValue={newField.type || ""} on:change="onTypeChange(event.option)" options={types} />
         </FormField>
-        <FormField data={{name: "Sort Order"}}>
+        <FormField name="Sort Order">
           <input type="text" class="form-control" on:blur="updateInput('sortOrder', this.value)" value={newField.sortOrder || ""} />
         </FormField>
+        <FormField name="Precision">
+          <input type="text" class="form-control" on:blur="updateInput('precision', this.value)" value={newField.precision || ""} />
+        </FormField>
+        <!--FormField data={{name: "Precision"}}>
+          <input type="text" class="form-control" on:blur="updateInput('precision', this.value)" value={newField.precision || ""} />
+        </FormField-->
         {#if newField && newField.type}
           <button class="btn btn-primary forward-btn" on:click="showValues()">
             Edit Values
@@ -71,25 +80,25 @@
     },
     methods: {
       onTypeChange(selectedType) {
-        let data = this.get();
-        data.newField.type = selectedType.id;
-        this.set({ data });
+        let { newField } = this.get();
+        newField.type = selectedType.id;
+        this.set({ newField });
       },
       onFieldChange(selectedField) {
-        let data = this.get();
-        data.newField.desc = selectedField.display;
-        data.newField.id = selectedField.field;
-        this.set({ data });
+        let { newField } = this.get();
+        newField.desc = selectedField.display;
+        newField.id = selectedField.field;
+        this.set({ newField });
       },
       onFormatChange(selectedFormat) {
-        let data = this.get();
-        data.newField.format = selectedFormat.id;
-        this.set({ data });
+        let { newField } = this.get();
+        newField.format = selectedFormat.id;
+        this.set({ newField });
       },
       updateInput(prop, value) {
-        let data = this.get();
-        data.newField[prop] = value;
-        this.set({ data });
+        let newField = this.get();
+        newField[prop] = value;
+        this.set({ newField });
       },
       showValues() {
         let { newField } = this.get();
