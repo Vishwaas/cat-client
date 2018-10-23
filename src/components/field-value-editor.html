@@ -16,6 +16,7 @@
       >
         <button slot="actions" data-toggle="tooltip" title="Add Value" on:click="addValue(newValue, index)" class="icon-btn glyphicon glyphicon-plus"></button>
       </FieldValueBox>
+      {message}
     {/if}
   {/if}
   <!--
@@ -31,6 +32,8 @@
 <script>
   import ConfigService from "../services/config";
   import FieldValueBox from "./field-value-box.html";
+  import Validator from "../utils/validator";
+  import { observeDeep } from "svelte-extras";
 
   const baseRangeValue = {
     low: "",
@@ -49,6 +52,12 @@
 
   let idCounter = 0;
 
+  function getNewRangeValue() {
+    let newRangeValue = Object.assign({}, baseRangeValue);
+    newRangeValue.id = idCounter++;
+    return newRangeValue;
+  }
+
   export default {
     components: { FieldValueBox },
 
@@ -60,10 +69,17 @@
       }
       idCounter = field.values.length || 1;
       this.set({ field });
+
+      observeDeep.prototype.call(this, "field.values.length", () => {
+        this.set({ newValue: getNewRangeValue() });
+      });
     },
 
     data() {
+      let newValue = getNewRangeValue();
       return {
+        newValue,
+        message: "",
         classNames: "",
         field: {
           values: []
@@ -73,19 +89,9 @@
     computed: {
       isTypeRange: ({ field }) => {
         return field && field.type === "Range";
-      },
-      newValue: ({ field }) => {
-        let newRangeValue = Object.assign({}, baseRangeValue);
-        newRangeValue.id = idCounter++;
-        return newRangeValue;
       }
     },
     methods: {
-      addNewRangeValue() {
-        let { newValues } = this.get();
-        newValues.push(Object.assign({}, baseRangeValue));
-        this.set({ newValues });
-      },
       deleteValue(index) {
         let { field } = this.get();
         field.values.splice(index, 1);
@@ -93,8 +99,12 @@
       },
       addValue(value, index) {
         let { newValues, field } = this.get();
-        field.values.push(value);
-        this.set({ field });
+        if (Validator.isValueValid(value, field.type)) {
+          field.values.push(value);
+          this.set({ message: "", field });
+        } else {
+          this.set({ message: "Invalid Value! Please fill all entries." });
+        }
       }
     }
   };

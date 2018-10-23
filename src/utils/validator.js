@@ -37,13 +37,7 @@ function isFieldValid(field) {
 			validFlag = false;
 		} else {
 			field.values.every(value => {
-				if (
-					!value.id ||
-					!value.desc ||
-					!value.sortOrder ||
-					(field.type !== 'Range' && !value.key) ||
-					(field.type === 'Range' && (!value.low || !value.high))
-				) {
+				if (!isValueValid(value, field.type)) {
 					validFlag = false;
 					return false;
 				}
@@ -54,7 +48,23 @@ function isFieldValid(field) {
 	return validFlag;
 }
 
+function isValueValid(value, type) {
+	let validFlag = true;
+	if (
+		!value.id ||
+		!value.desc ||
+		!value.sortOrder ||
+		(type !== 'Range' && !value.key) ||
+		(type === 'Range' && (!value.low || !value.high))
+	) {
+		validFlag = false;
+	}
+
+	return validFlag;
+}
+
 export default {
 	isConfigValid,
-	isFieldValid
+	isFieldValid,
+	isValueValid
 };
