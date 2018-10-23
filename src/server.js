@@ -18,7 +18,6 @@ function proxyReroute(req, res, next) {
 			console.log('Error in config call', e);
 		});
 	} else if (req.url.indexOf('screener-api/') != -1) {
-		console.log('calling screener');
 		proxy.web(
 			req,
 			res,
@@ -26,15 +25,9 @@ function proxyReroute(req, res, next) {
 				target: 'http://ddt-acc.markit.partners'
 			},
 			function(e) {
-				console.log('Error in screener call', e);
+				console.log('Error in proxy call', e);
 			}
 		);
-		proxy.on('proxyReq', function(proxyReq, req, res) {
-			console.log('before sending to server', proxyReq);
-		});
-		proxy.on('proxyRes', function(proxyRes, req, res) {
-			console.log('before sending to client', proxyRes);
-		});
 	} else {
 		next();
 	}
