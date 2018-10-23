@@ -1,9 +1,13 @@
 import $ from 'jquery';
 
 function jqAjax(options) {
-	return new Promise(resolve => {
-		$.ajax(options).then(response => {
+	return new Promise((resolve, reject) => {
+		let $req = $.ajax(options);
+		$req.done(response => {
 			resolve(response);
+		});
+		$req.fail(error => {
+			reject(error);
 		});
 	});
 }

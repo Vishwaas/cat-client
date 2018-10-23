@@ -24,9 +24,9 @@
       <FormField name="Precision">
         <input type="text" class="form-control" on:blur="updateInput('precision', this.value)" value={newField.precision || ""} />
       </FormField>
-      {#if newField.possibleValues && newField.possibleValues.length}
+      {#if possibleValues && possibleValues.length}
         <FormField name="Possible Values">
-          <SvelteSelect options={newField.possibleValues} />
+          <SvelteSelect options={possibleValues} />
         </FormField>
       {/if}
       
@@ -70,13 +70,13 @@
             selectedScreener.screenId,
             newField.id
           ).then(fieldValues => {
-            newField.possibleValues = fieldValues.map((fieldValue, index) => {
+            let possibleValues = fieldValues.map((fieldValue, index) => {
               return {
                 label: fieldValue,
                 value: fieldValue
               };
             });
-            this.set({ newField });
+            this.set({ possibleValues });
           });
         }
       });
@@ -87,6 +87,7 @@
       let formats = ConfigService.getFormats();
 
       return {
+        possibleValues: [],
         selectedFieldId: null,
         newField: baseField,
         types,

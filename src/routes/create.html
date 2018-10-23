@@ -9,10 +9,10 @@
   export default {
     components: { ConfigEditor },
     methods: {
-      createNewConfig(newConfig) {
+      createNewConfig(data) {
         AjaxService.post({
           url: "/v1/configurations/",
-          data: JSON.stringify(newConfig)
+          data
         })
           .then(() => {
             this.root.fire("alert-notification", {

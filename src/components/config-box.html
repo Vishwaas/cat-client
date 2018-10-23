@@ -1,8 +1,8 @@
 <div class="config-box">
   <ActionableHeader>
-    <h3 on:click="set({showDetails: true})" class="clickable" slot="header">{config.name}</h3>
-    <a class="glyphicon glyphicon-edit icon-btn" href="edit/{config.id}" title="Edit {config.name}" slot="actions" />
-    <button class="glyphicon glyphicon-trash icon-btn" on:click="set({showDeleteModal: true})" title="Delete {config.name}" slot="actions" ></button>
+    <h3 on:click="set({showDetails: true})" class="clickable" slot="header">{config.desc}: {config.screenerId}</h3>
+    <a class="glyphicon glyphicon-edit icon-btn" href="edit/{config.id}" title="Edit {config.desc}" slot="actions" />
+    <button class="glyphicon glyphicon-trash icon-btn" on:click="set({showDeleteModal: true})" title="Delete {config.desc}" slot="actions" ></button>
   </ActionableHeader>
 
   <div class="field-list">
@@ -22,8 +22,8 @@
     <h4 slot="header">Delete Configuration</h4>
     <p slot="body">Are you sure you want to delete configuration {config.name}?</p>
     <div class="delete-actions" slot="footer">
-      <button on:click="deleteConfig()">Confirm</button>
-      <button on:click="set({showDeleteModal: false})">Cancel</button>
+      <button class="btn btn-primary" on:click="deleteConfig()">Confirm</button>
+      <button class="btn btn-secondary" on:click="set({showDeleteModal: false})">Cancel</button>
     </div>
   </ModalWindow>
 {/if}
@@ -42,7 +42,7 @@
         {/each}
     </p>
     <div class="delete-actions" slot="footer">
-      <button on:click="set({showDetails: false})">Ok</button>
+      <button class="btn btn-primary" on:click="set({showDetails: false})">Ok</button>
     </div>
   </ModalWindow>
 {/if}
@@ -85,8 +85,8 @@
               showDeleteModal: false
             });
             this.root.fire("alert-notification", {
-              header: "Sucess",
-              message: "Sucessfully Deleted"
+              header: "Error",
+              message: "Could not be deleted. Kindly retry"
             });
           });
       }
