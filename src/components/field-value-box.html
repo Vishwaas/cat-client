@@ -1,5 +1,4 @@
 <div class="field-value-box">
-
   {#if isTypeRange}
     <input type="text" on:blur="updateInput('low', this.value)" placeholder="Low" class="form-control" value={value.low || ''} {disabled} />
     <input type="text" on:blur="updateInput('high', this.value)" placeholder="High" class="form-control" value={value.high || ''} {disabled} />
@@ -16,12 +15,15 @@
   import $ from "jquery";
 
   export default {
-    oncreate() {
-      let { value, id, index } = this.options.data;
-      value.id = value.id || id;
-      value.sortOrder = value.sortOrder || index;
-      this.set({ value });
+    onstate({ changed, current }) {
+      if (changed.value) {
+        let { value, id, index } = current;
+        value.id = value.id || id;
+        value.sortOrder = value.sortOrder || index || "";
+        this.set({ value });
+      }
     },
+
     data() {
       return {
         isReadOnly: false,
@@ -40,7 +42,7 @@
       updateInput(prop, input) {
         let { value } = this.get();
         value[prop] = input;
-        return value;
+        this.set({ value });
       }
     }
   };

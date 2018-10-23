@@ -13,6 +13,7 @@
         isTypeRange
         index={field.values.length + 1}
         bind:value=newValue
+        id="safdsf"
       >
         <button slot="actions" data-toggle="tooltip" title="Add Value" on:click="addValue(newValue, index)" class="icon-btn glyphicon glyphicon-plus"></button>
       </FieldValueBox>
@@ -35,50 +36,37 @@
   import Validator from "../utils/validator";
   import { observeDeep } from "svelte-extras";
 
-  const baseRangeValue = {
-    low: "",
-    high: "",
-    desc: "",
-    id: null,
-    sortOrder: ""
-  };
-
-  const baseValue = {
-    key: "",
-    desc: "",
-    id: "",
-    sortOrder: ""
-  };
-
-  let idCounter = 0;
-
-  function getNewRangeValue() {
-    let newRangeValue = Object.assign({}, baseRangeValue);
-    newRangeValue.id = idCounter++;
-    return newRangeValue;
+  function getNewRangeValue(id) {
+    return {
+      low: " ",
+      high: " ",
+      desc: " ",
+      id: id || null,
+      sortOrder: " "
+    };
   }
 
   export default {
     components: { FieldValueBox },
 
     oncreate() {
-      let { field } = this.options.data;
-      let newValues = [];
+      let { field, idCounter } = this.options.data;
       if (!(field.values && field.values.length)) {
         field.values = [];
       }
       idCounter = field.values.length || 1;
-      this.set({ field });
+      this.set({ field, idCounter });
 
-      observeDeep.prototype.call(this, "field.values.length", () => {
-        this.set({ newValue: getNewRangeValue() });
-      });
+      // observeDeep.call(this, "field.values.length", () => {
+      //   let { idCounter } = this.get();
+      //   idCounter++;
+      //   this.set({ idCounter });
+      // });
     },
 
     data() {
-      let newValue = getNewRangeValue();
       return {
-        newValue,
+        idCounter: 1,
         message: "",
         classNames: "",
         field: {
@@ -89,6 +77,9 @@
     computed: {
       isTypeRange: ({ field }) => {
         return field && field.type === "Range";
+      },
+      newValue: ({ idCounter }) => {
+        return getNewRangeValue(idCounter);
       }
     },
     methods: {
@@ -98,10 +89,12 @@
         this.set({ field });
       },
       addValue(value, index) {
-        let { newValues, field } = this.get();
+        let { field, idCounter } = this.get();
+
         if (Validator.isValueValid(value, field.type)) {
+          idCounter++;
           field.values.push(value);
-          this.set({ message: "", field });
+          this.set({ message: "", field, idCounter });
         } else {
           this.set({ message: "Invalid Value! Please fill all entries." });
         }
