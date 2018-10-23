@@ -1,7 +1,7 @@
 {#await fields}
     Loading Please Wait
 {:then result}
-  <div class="editor-container {showFieldValueEditor ? "hide" : "show"}">
+  <div class="editor-container">
     <FormField name="Fields">
       <SvelteSelect labelKey="display" valueKey="field" prompt="Select field" selectedValue={newField.id || ""} on:change="onFieldChange(event.option)" options={result} />
     </FormField>
@@ -28,8 +28,8 @@
       <!--FormField data={{name: "Precision"}}>
         <input type="text" class="form-control" on:blur="updateInput('precision', this.value)" value={newField.precision || ""} />
       </FormField-->
-      {#if newField && newField.type}
-        <FieldValueEditor classNames={showFieldValueEditor ? "hide" : "show"} field={newField} on:back="set({showFieldValueEditor: false})"/>
+      {#if newField.type}
+        <FieldValueEditor field={newField}/>
       {/if}
     {/if}
   </div>
@@ -63,16 +63,12 @@
       return {
         newField: baseField,
         types,
-        formats,
-        showFieldValueEditor: false
+        formats
       };
     },
     computed: {
       fields: ({ selectedScreener }) => {
         return ConfigService.getFields(selectedScreener.screenId);
-      },
-      editorClass: ({ showFieldValueEditor }) => {
-        return showFieldValueEditor ? "show-value-editor" : "show-field-editor";
       }
     },
     methods: {
@@ -96,13 +92,6 @@
         let newField = this.get();
         newField[prop] = value;
         this.set({ newField });
-      },
-      showValues() {
-        let { newField } = this.get();
-        if (!(newField.values && newField.values.length)) {
-          newField.values = [];
-        }
-        this.set({ showFieldValueEditor: true, newField });
       }
     }
   };
@@ -110,12 +99,5 @@
 <style scoped type="text/scss">
   .forward-btn {
     float: right;
-  }
-  .editor-container {
-    display: none;
-    &.show-value-editor,
-    &.show-field-editor {
-      display: block;
-    }
   }
 </style>

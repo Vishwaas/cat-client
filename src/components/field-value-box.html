@@ -1,27 +1,47 @@
 <div class="field-value-box">
+
   {#if isTypeRange}
-    <input type="text" placeholder="Low" class="form-control" bind:value=value.low disabled={isReadOnly ? disabled : ''} />
-    <input type="text" placeholder="High" class="form-control" bind:value=value.high disabled={isReadOnly ? disabled : ''} />
+    <input type="text" on:blur="updateInput('low', this.value)" placeholder="Low" class="form-control" value={value.low || ''} {disabled} />
+    <input type="text" on:blur="updateInput('high', this.value)" placeholder="High" class="form-control" value={value.high || ''} {disabled} />
   {:else}
-    <input type="text" placeholder="Key" class="form-control" bind:value=value.key disabled={isReadOnly ? disabled : ''} />
+    <input type="text" on:blur="updateInput('key', this.value)" placeholder="Key" class="form-control" value={value.key || ''} {disabled} />
   {/if}
-  <input type="text" placeholder="Description" class="form-control" bind:value=value.desc disabled={isReadOnly ? disabled : ''} />
-  <input type="text" placeholder="Sort Order"  class="form-control" bind:value=valueIndex disabled={isReadOnly ? disabled : ''} />
-  <input type="text" placeholder="ID" class="form-control" bind:value=valueIndex disabled/>
-  <button data-toggle="tooltip" title="Delete Value" on:click="fire('deleteValue', {index: valueIndex})" class="icon-btn glyphicon glyphicon-remove-circle"></button>
+  <input type="text" on:blur="updateInput('desc', this.value)" placeholder="Description" class="form-control" value={value.desc || ''} {disabled} />
+  <input type="text" on:blur="updateInput('sortOrder', this.value)" placeholder="Sort Order"  class="form-control" value={value.sortOrder || ''} {disabled} />
+  <input type="text" placeholder="ID" class="form-control" value={value.id || ''} disabled/>
+  <slot name="actions"></slot>
 </div>
 
 <script>
   import $ from "jquery";
 
   export default {
+    oncreate() {
+      let { value, id, index } = this.options.data;
+      value.id = value.id || id;
+      value.sortOrder = value.sortOrder || index;
+      this.set({ value });
+    },
     data() {
       return {
         isReadOnly: false,
         isTypeRange: false,
         value: {},
-        valueIndex: -1
+        index: null,
+        id: null
       };
+    },
+    computed: {
+      disabled: ({ isReadOnly }) => {
+        return isReadOnly ? "disabled" : "";
+      }
+    },
+    methods: {
+      updateInput(prop, input) {
+        let { value } = this.get();
+        value[prop] = input;
+        return value;
+      }
     }
   };
 </script>

@@ -3,18 +3,29 @@
     {#each field.values as value, index}
       <FieldValueBox 
         isTypeRange
-        valueIndex={index}
-        bind:value=value
-        on:deleteValue="deleteValue(event.index)"
-      />
+        value={value}
+      >
+        <button slot="actions" data-toggle="tooltip" title="Delete Value" on:click="deleteValue(index)" class="icon-btn glyphicon glyphicon-remove"></button>
+      </FieldValueBox>
     {/each}
+    {#if isTypeRange}
+       <FieldValueBox 
+        isTypeRange
+        index={field.values.length + 1}
+        bind:value=newValue
+      >
+        <button slot="actions" data-toggle="tooltip" title="Add Value" on:click="addValue(newValue, index)" class="icon-btn glyphicon glyphicon-plus"></button>
+      </FieldValueBox>
+    {/if}
   {/if}
+  <!--
   {#if isTypeRange}
-    <button on:click="addRangeValue()" class="btn btn-primary add-range-value">
+    <button on:click="addNewRangeValue()" class="btn btn-primary add-range-value">
       Add Range Value
       <span class="glyphicon glyphicon-plus-sign"></span>
     </button>
   {/if}
+  -->
 </div>
 
 <script>
@@ -25,25 +36,29 @@
     low: "",
     high: "",
     desc: "",
-    id: -1,
-    sortOrder: -1
+    id: null,
+    sortOrder: ""
   };
 
   const baseValue = {
     key: "",
     desc: "",
-    id: -1,
-    sortOrder: -1
+    id: "",
+    sortOrder: ""
   };
+
+  let idCounter = 0;
 
   export default {
     components: { FieldValueBox },
 
     oncreate() {
       let { field } = this.options.data;
+      let newValues = [];
       if (!(field.values && field.values.length)) {
         field.values = [];
       }
+      idCounter = field.values.length || 1;
       this.set({ field });
     },
 
@@ -58,17 +73,27 @@
     computed: {
       isTypeRange: ({ field }) => {
         return field && field.type === "Range";
+      },
+      newValue: ({ field }) => {
+        let newRangeValue = Object.assign({}, baseRangeValue);
+        newRangeValue.id = idCounter++;
+        return newRangeValue;
       }
     },
     methods: {
-      addRangeValue() {
-        let { field } = this.get();
-        field.values.push(Object.assign({}, baseRangeValue));
-        this.set({ field });
+      addNewRangeValue() {
+        let { newValues } = this.get();
+        newValues.push(Object.assign({}, baseRangeValue));
+        this.set({ newValues });
       },
       deleteValue(index) {
         let { field } = this.get();
         field.values.splice(index, 1);
+        this.set({ field });
+      },
+      addValue(value, index) {
+        let { newValues, field } = this.get();
+        field.values.push(value);
         this.set({ field });
       }
     }
