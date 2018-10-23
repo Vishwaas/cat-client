@@ -2,7 +2,7 @@
 <div class="configuration-container">
 		{#if configurations && configurations.length}
 			{#each configurations as configuration}
-			
+				<ConfigBox config=configuration />
 			{/each}
 		{:else}
 			No Configurations available. Kindle create one.

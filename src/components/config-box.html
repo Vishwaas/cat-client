@@ -60,7 +60,7 @@
     },
     computed: {
       topTwoFields: ({ config }) => {
-        return config.fields.slice(0, 2);
+        return (config && config.fields && config.fields.slice(0, 2)) || [];
       }
     },
     methods: {

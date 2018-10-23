@@ -11,7 +11,7 @@
     methods: {
       createNewConfig(newConfig) {
         AjaxService.post({
-          url: "/v1/configuations/",
+          url: "/v1/configurations/",
           data: JSON.stringify(newConfig)
         })
           .then(() => {

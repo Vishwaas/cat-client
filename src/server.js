@@ -13,7 +13,6 @@ function proxyReroute(req, res, next) {
 		req.url.indexOf('/configurations') != -1 ||
 		req.url.indexOf('/screeners') != -1
 	) {
-		console.log('calling config');
 		proxy.web(req, res, { target: 'http://localhost:3000' }, function(e) {
 			console.log('Error in config call', e);
 		});
