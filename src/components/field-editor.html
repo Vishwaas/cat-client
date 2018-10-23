@@ -1,5 +1,5 @@
 {#await fields}
-    Loading Please Wait
+    Loading fields. Please Wait
 {:then result}
   <div class="editor-container">
     <FormField name="Fields">
@@ -24,6 +24,11 @@
       <FormField name="Precision">
         <input type="text" class="form-control" on:blur="updateInput('precision', this.value)" value={newField.precision || ""} />
       </FormField>
+      {#if newField.possibleValues && newField.possibleValues.length}
+        <FormField name="Possible Values">
+          <SvelteSelect options={newField.possibleValues} />
+        </FormField>
+      {/if}
       
       <!--FormField data={{name: "Precision"}}>
         <input type="text" class="form-control" on:blur="updateInput('precision', this.value)" value={newField.precision || ""} />
@@ -42,6 +47,7 @@
   import SvelteSelect from "./svelte-select.html";
   import ConfigService from "../services/config";
   import FieldValueEditor from "./field-value-editor.html";
+  import { observeDeep } from "svelte-extras";
 
   const baseField = {
     id: "",
@@ -56,11 +62,32 @@
   export default {
     components: { FormField, SvelteSelect, MultiValueTextBox, FieldValueEditor },
 
+    oncreate() {
+      observeDeep.call(this, "selectedFieldId", () => {
+        let { newField, selectedScreener } = this.get();
+        if (newField && newField.id) {
+          ConfigService.getFieldValues(
+            selectedScreener.screenId,
+            newField.id
+          ).then(fieldValues => {
+            newField.possibleValues = fieldValues.map((fieldValue, index) => {
+              return {
+                label: fieldValue,
+                value: fieldValue
+              };
+            });
+            this.set({ newField });
+          });
+        }
+      });
+    },
+
     data() {
       let types = ConfigService.getTypes();
       let formats = ConfigService.getFormats();
 
       return {
+        selectedFieldId: null,
         newField: baseField,
         types,
         formats
@@ -81,7 +108,7 @@
         let { newField } = this.get();
         newField.desc = selectedField.display;
         newField.id = selectedField.field;
-        this.set({ newField });
+        this.set({ newField, selectedFieldId: selectedField.field });
       },
       onFormatChange(selectedFormat) {
         let { newField } = this.get();
@@ -89,7 +116,7 @@
         this.set({ newField });
       },
       updateInput(prop, value) {
-        let newField = this.get();
+        let { newField } = this.get();
         newField[prop] = value;
         this.set({ newField });
       }

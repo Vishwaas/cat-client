@@ -1,16 +1,25 @@
 import configTypes from '../enumerations/config-types';
 import configFormats from '../enumerations/config-formats';
-import $ from 'jquery';
+import AjaxService from '../services/ajax';
 
 let fields = [];
 let screeners = [];
 
+function fetchFieldValues(screenerId, fieldId) {
+	return new Promise(resolve => {
+		AjaxService.get({
+			url: `/screener-api/v1/screens/${screenerId}/${fieldId}/distinctValues`
+		}).then(response => {
+			resolve(response.data.items);
+		});
+	});
+}
+
 function fetchScreenerFields(screenerId) {
 	return new Promise(resolve => {
-		$.ajax({
-			url: `http://ddt-acc.markit.partners/screener-api/v1/screens/${screenerId}/fields`,
-			type: 'GET'
-		}).done(response => {
+		AjaxService.get({
+			url: `/screener-api/v1/screens/${screenerId}/fields`
+		}).then(response => {
 			resolve(response.data);
 		});
 	});
@@ -18,10 +27,9 @@ function fetchScreenerFields(screenerId) {
 
 function fetchScreeners() {
 	return new Promise(resolve => {
-		$.ajax({
-			url: 'http://localhost:3000/v1/screeners',
-			type: 'GET'
-		}).done(response => {
+		AjaxService.get({
+			url: '/v1/screeners'
+		}).then(response => {
 			resolve(response.data.items);
 		});
 	});
@@ -34,6 +42,10 @@ export default {
 
 	getFormats() {
 		return configFormats;
+	},
+
+	getFieldValues(screenerId, fieldId) {
+		return fetchFieldValues(screenerId, fieldId);
 	},
 
 	getFields(screenerId) {

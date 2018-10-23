@@ -4,12 +4,15 @@
   import ConfigEditor from "../../components/config-editor.html";
   import * as sapper from "../../../__sapper__/client.js";
   import $ from "jquery";
+  import AjaxService from "../../services/ajax";
 
   export default {
     preload({ params, query }) {
       let { configId } = params;
       let _this = this;
-      return this.fetch("http://localhost:3000/v1/config/" + configId)
+      return AjaxService.get({
+        url: "/v1/configurations/" + configId
+      })
         .then(r => r.json())
         .then(configuration => {
           return { configuration };
@@ -23,19 +26,17 @@
 
     methods: {
       editConfig(newConfig) {
-        $.ajax({
-          url: "http://localhost:3000/v1/config/" + newConfig.id,
-          type: "PUT",
+        AjaxService.put({
+          url: "/v1/configurations/" + newConfig.id,
           data: {
             configuration: JSON.stringify(newConfig)
-          },
-          success: () => {
-            this.root.fire("alert-notification", {
-              header: "Sucess",
-              message: "Sucessed created new configuration"
-            });
-            sapper.goto("/");
           }
+        }).then(() => {
+          this.root.fire("alert-notification", {
+            header: "Sucess",
+            message: "Sucessed created new configuration"
+          });
+          sapper.goto("/");
         });
       }
     }

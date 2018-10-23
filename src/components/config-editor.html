@@ -16,12 +16,11 @@
   
   {#if selectedScreener && selectedScreener.screenId}
     <FormField classNames="config-name" name="Name">
-      <input type="text" class="form-control" bind:value=configuration.name />
+      <input type="text" class="form-control" bind:value=configuration.desc />
     </FormField>
 
     {#if configuration && configuration.fields}
       {#each configuration.fields as field, index}
-        {JSON.stringify(field)}
         <FieldBox field={field} />
       {/each}
     {/if}
@@ -68,7 +67,7 @@
         showAddField: false,
         configuration: {
           screenerId: "",
-          name: "",
+          desc: "",
           fields: []
         }
       };
@@ -76,7 +75,7 @@
     computed: {
       isNew: ({ configuration }) => {
         return !(
-          configuration.name &&
+          configuration.desc &&
           configuration.fields &&
           configuration.fields.length
         );

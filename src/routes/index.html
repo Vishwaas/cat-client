@@ -2,7 +2,7 @@
 <div class="configuration-container">
 		{#if configurations && configurations.length}
 			{#each configurations as configuration}
-				<ConfigBox config={configuration} />
+			
 			{/each}
 		{:else}
 			No Configurations available. Kindle create one.
@@ -11,14 +11,16 @@
 
 <script>
 	import ConfigBox from "../components/config-box";
+	import AjaxService from "../services/ajax";
 
 	export default {
 	  components: { ConfigBox },
 
 	  preload() {
 	    let _this = this;
-	    return this.fetch("http://localhost:3000/v1/config")
-	      .then(r => r.json())
+	    return AjaxService.get({
+	      url: "/v1/configurations/"
+	    })
 	      .then(configurations => {
 	        return { configurations };
 	      })

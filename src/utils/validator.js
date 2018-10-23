@@ -33,7 +33,7 @@ function isFieldValid(field) {
 	) {
 		validFlag = false;
 	} else {
-		if (!(field.values && field.values.length)) {
+		if (field.type === 'Range' && !(field.values && field.values.length)) {
 			validFlag = false;
 		} else {
 			field.values.every(value => {
@@ -54,7 +54,6 @@ function isValueValid(value, type) {
 		!value.id ||
 		!value.desc ||
 		!value.sortOrder ||
-		(type !== 'Range' && !value.key) ||
 		(type === 'Range' && (!value.low || !value.high))
 	) {
 		validFlag = false;

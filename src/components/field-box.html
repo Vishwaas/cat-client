@@ -26,11 +26,11 @@
       </FormField>
     </div>
     {#if field.values}
-      {#each field.values as value, index}
+      {#each field.values as value}
         <FieldValueBox 
           isReadOnly=true
-          isTypeRange
-          value
+          isTypeRange={field.type === 'Range'}
+          value={value}
         />
       {/each}
     {/if}
@@ -68,18 +68,24 @@
 <style type="text/scss" scoped>
   .field-box {
     border: 1px solid gray;
+    position: relative;
+    padding-left: 5px;
     margin-bottom: 30px;
     border-radius: 5px;
     width: 100%;
     overflow: hidden;
+    &::before {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      content: "-";
+    }
     :global(.form-field.inline) {
       margin-bottom: 0px;
     }
-
     .header {
       border-radius: 0px;
       border: none;
-      border-bottom: 1px solid gray;
       display: flex;
       justify-content: space-between;
       height: 35px;
@@ -95,8 +101,13 @@
         justify-content: space-between;
       }
     }
-    &.collapsed .body {
-      display: none;
+    &.collapsed {
+      &::before {
+        content: "+";
+      }
+      .body {
+        display: none;
+      }
     }
   }
 </style>

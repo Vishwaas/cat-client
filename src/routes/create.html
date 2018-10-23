@@ -10,7 +10,10 @@
     components: { ConfigEditor },
     methods: {
       createNewConfig(newConfig) {
-        AjaxService.post()
+        AjaxService.post({
+          url: "/v1/configuations/",
+          data: JSON.stringify(newConfig)
+        })
           .then(() => {
             this.root.fire("alert-notification", {
               header: "Success",

@@ -1,15 +1,10 @@
 import $ from 'jquery';
 
 function jqAjax(options) {
-	this.root.fire('loading', { flag: true });
 	return new Promise(resolve => {
-		$.ajax(options)
-			.then(() => {
-				resolve(...arguments);
-			})
-			.finally(() => {
-				appContext.root.fire('loading', { flag: false });
-			});
+		$.ajax(options).then(response => {
+			resolve(response);
+		});
 	});
 }
 
