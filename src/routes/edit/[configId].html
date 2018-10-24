@@ -27,13 +27,11 @@
       editConfig(newConfig) {
         AjaxService.put({
           url: "/v1/configurations/" + newConfig.id,
-          data: {
-            configuration: JSON.stringify(newConfig)
-          }
+          data: JSON.stringify({ configuration: newConfig })
         }).then(() => {
           this.root.fire("alert-notification", {
             header: "Sucess",
-            message: "Sucessed created new configuration"
+            message: "Sucessfully edited configuration"
           });
           sapper.goto("/");
         });
