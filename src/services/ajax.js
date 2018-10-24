@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 function jqAjax(options) {
+	options.contentType = 'application/json';
 	return new Promise((resolve, reject) => {
 		let $req = $.ajax(options);
 		$req.done(response => {

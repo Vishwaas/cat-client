@@ -12,7 +12,7 @@
       createNewConfig(data) {
         AjaxService.post({
           url: "/v1/configurations/",
-          data
+          data: JSON.stringify({ configuration: data })
         })
           .then(() => {
             this.root.fire("alert-notification", {

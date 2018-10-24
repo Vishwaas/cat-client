@@ -1,99 +1,35 @@
 <div class="config-box">
   <ActionableHeader>
-    <h3 on:click="set({showDetails: true})" class="clickable" slot="header">{config.desc}: {config.screenerId}</h3>
+    <h3 on:click="fire('detail', {selectedConfiguration: config})" class="clickable" slot="header">{config.desc}</h3>
     <a class="glyphicon glyphicon-edit icon-btn" href="edit/{config.id}" title="Edit {config.desc}" slot="actions" />
-    <button class="glyphicon glyphicon-trash icon-btn" on:click="set({showDeleteModal: true})" title="Delete {config.desc}" slot="actions" ></button>
+    <button class="glyphicon glyphicon-trash icon-btn" on:click="fire('delete', {selectedConfiguration: config})" title="Delete {config.desc}" slot="actions" ></button>
   </ActionableHeader>
-
-  <div class="field-list">
-    {#each topTwoFields as field}
-      <div class="field-row">
-        <span>{field.name}</span>
-        <span>
-          {(field.values || []).join(',')}
-        </span>
-      </div>
-    {/each}
+  <div class="field-row">
+    <span>Screener Id</span>
+    <span>{config.screenerId}</span>
+  </div>
+  <div class="field-row">
+    <span>Field Count</span>
+    <span>{config.fields && config.fields.length || 0}</span>
   </div>
 </div>
 
-{#if showDeleteModal}
-  <ModalWindow>
-    <h4 slot="header">Delete Configuration</h4>
-    <p slot="body">Are you sure you want to delete configuration {config.name}?</p>
-    <div class="delete-actions" slot="footer">
-      <button class="btn btn-primary" on:click="deleteConfig()">Confirm</button>
-      <button class="btn btn-secondary" on:click="set({showDeleteModal: false})">Cancel</button>
-    </div>
-  </ModalWindow>
-{/if}
-
-{#if showDetails}
-  <ModalWindow>
-    <h4 slot="header">{config.name}</h4>
-    <p slot="body" class="field-list">
-      {#each config.fields as field}
-          <div class="field-row">
-            <span>{field.name}</span>
-            <span>
-              {(field.values || []).join(',')}
-            </span>
-          </div>
-        {/each}
-    </p>
-    <div class="delete-actions" slot="footer">
-      <button class="btn btn-primary" on:click="set({showDetails: false})">Ok</button>
-    </div>
-  </ModalWindow>
-{/if}
-
 <script>
   import ActionableHeader from "./actionable-header.html";
-  import ModalWindow from "./modal-window.html";
   import * as sapper from "../../__sapper__/client.js";
   import AjaxService from "../services/ajax";
 
   export default {
     components: {
-      ActionableHeader,
-      ModalWindow
+      ActionableHeader
     },
     computed: {
       topTwoFields: ({ config }) => {
         return (config && config.fields && config.fields.slice(0, 2)) || [];
       }
     },
-    methods: {
-      deleteConfig() {
-        let { config } = this.get();
-        AjaxService.delete({
-          url: "/v1/configurations/" + config.id,
-          timeout: 3000
-        })
-          .then(() => {
-            this.set({
-              showDeleteModal: false
-            });
-            this.root.fire("alert-notification", {
-              header: "Sucess",
-              message: "Sucessfully Deleted"
-            });
-            sapper.goto("/");
-          })
-          .catch(() => {
-            this.set({
-              showDeleteModal: false
-            });
-            this.root.fire("alert-notification", {
-              header: "Error",
-              message: "Could not be deleted. Kindly retry"
-            });
-          });
-      }
-    },
     data() {
       return {
-        showDeleteModal: false,
         config: {
           fields: []
         }

@@ -2,7 +2,6 @@ import configTypes from '../enumerations/config-types';
 import configFormats from '../enumerations/config-formats';
 import AjaxService from '../services/ajax';
 
-let fields = [];
 let screeners = [];
 
 function fetchFieldValues(screenerId, fieldId) {

@@ -1,40 +1,105 @@
 <h2>Configuration List</h2>
 <div class="configuration-container">
-		{#if configurations && configurations.length}
-			{#each configurations as configuration}
-				<ConfigBox config={configuration} />
+	{#if configurations && configurations.length}
+		{#each configurations as configuration}
+			<ConfigBox 
+				on:delete="deleteConfiguration(event.selectedConfiguration)"
+				on:detail="detailConfiguration(event.selectedConfiguration)" 
+				config={configuration} />
+		{/each}
+	{:else}
+		No Configurations available. Kindle create one.
+	{/if}
+</div>
+{#if showDeleteModal}
+  <ModalWindow>
+    <h4 slot="header">Delete Configuration</h4>
+    <p slot="body">Are you sure you want to delete configuration {selectedConfiguration.desc}?</p>
+    <div class="delete-actions" slot="footer">
+      <button class="btn btn-primary" on:click="deleteConfig(selectedConfiguration)">Confirm</button>
+      <button class="btn btn-secondary" on:click="set({showDeleteModal: false})">Cancel</button>
+    </div>
+  </ModalWindow>
+{/if}
+
+{#if showDetails}
+  <ModalWindow>
+    <h4 slot="header">{selectedConfiguration.desc}</h4>
+    <p slot="body" class="field-list">
+      {#each selectedConfiguration.fields as field}
+				<FieldBox field={field} />
 			{/each}
-		{:else}
-			No Configurations available. Kindle create one.
-		{/if}
-	</div>
+    </p>
+    <div class="delete-actions" slot="footer">
+      <button class="btn btn-primary" on:click="set({showDetails: false})">Ok</button>
+    </div>
+  </ModalWindow>
+{/if}
 
 <script>
-	import ConfigBox from "../components/config-box";
-	import AjaxService from "../services/ajax";
+		import ConfigBox from "../components/config-box";
+		import AjaxService from "../services/ajax";
+		import ModalWindow from "../components/modal-window.html";
+		import FieldBox from "../components/field-box.html";
 
-	export default {
-	  components: { ConfigBox },
+		export default {
+		  components: { ConfigBox, ModalWindow, FieldBox },
 
-	  preload() {
-	    let _this = this;
-	    return AjaxService.get({
-	      url: "/v1/configurations/"
-	    })
-	      .then(configurations => {
-	        return { configurations };
-	      })
-	      .catch(() => {
-	        console.error("Could not fetch confiugrations");
-	      });
-	  },
+		  preload() {
+		    let _this = this;
+		    return AjaxService.get({
+		      url: "/v1/configurations/"
+		    })
+		      .then(configurations => {
+		        return { configurations };
+		      })
+		      .catch(() => {
+		        console.error("Could not fetch confiugrations");
+		      });
+		  },
 
-	  data() {
-	    return {
-	      id: null
-	    };
-	  }
-	};
+		  data() {
+		    return {
+		      showDeleteModal: false,
+		      showDetails: false,
+		      selectedConfiguration: null
+		    };
+		  },
+
+		  methods: {
+		    deleteConfiguration(selectedConfiguration) {
+		      this.set({ showDeleteModal: true, selectedConfiguration });
+		    },
+		    detailConfiguration(selectedConfiguration) {
+		      this.set({ showDetails: true, selectedConfiguration });
+		    },
+		    deleteConfig(config) {
+		      AjaxService.delete({
+		        url: "/v1/configurations/" + config.id,
+		        timeout: 3000
+		      })
+		        .then(() => {
+		          this.set({
+		            showDeleteModal: false
+		          });
+		          this.root.fire("alert-notification", {
+		            header: "Sucess",
+		            message: "Sucessfully Deleted"
+		          });
+		          sapper.goto("/");
+		        })
+		        .catch(() => {
+		          this.set({
+		            showDeleteModal: false
+		          });
+		          this.root.fire("alert-notification", {
+		            header: "Error",
+		            message: "Could not be deleted. Kindly retry"
+		          });
+		        });
+		    }
+		  }
+		};
 </script>
 
 <style>
