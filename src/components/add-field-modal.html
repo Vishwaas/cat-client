@@ -4,7 +4,7 @@
     <FieldEditor onEdit="" selectedScreener={selectedScreener} newField={newField}/>
   </div>
   <div class="delete-actions" slot="footer">
-    <button class="btn btn-primary" on:click="addnewField()">Add</button>
+    <button class="btn btn-primary" on:click="saveField()">Save</button>
     <button class="btn btn-default" on:click="fire('notifyFieldAddition', {})">Cancel</button>
   </div>
   <div slot="footer">
@@ -20,19 +20,26 @@
   export default {
     components: { ModalWindow, FieldEditor },
 
+    oncreate() {
+      let { newField } = this.options.data || {};
+      let isNew = newField && newField.id ? false : true;
+      this.set({ isNew });
+    },
+
     data() {
       return {
         selectedScreener: {},
         message: "",
-        newField: {}
+        newField: {},
+        isNew: true
       };
     },
     methods: {
-      addnewField() {
-        let { newField } = this.get();
+      saveField() {
+        let { newField, isNew } = this.get();
         if (Validator.isFieldValid(newField)) {
           this.set({ message: "" });
-          this.fire("notifyFieldAddition", { newField });
+          this.fire("notifyFieldSave", { newField, isNew });
         } else {
           this.set({
             message:

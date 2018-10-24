@@ -19,10 +19,14 @@
 
     {#if configuration && configuration.fields}
       {#each configuration.fields as field, index}
-        <FieldBox field={field} />
+        <div class="field-box-wrapper">
+          <FieldBox field={field} />
+          <button class="glyphicon glyphicon-edit icon-btn" on:click="showFieldModal(field)" title="Edit Field {field.desc}" ></button>
+        </div>
+       
       {/each}
     {/if}
-    <button on:click="set({showAddField: true})" class="btn btn-primary add-new-field">
+    <button on:click="showFieldModal()" class="btn btn-primary add-new-field">
       Add New Field 
       <span class="glyphicon glyphicon-plus-sign"></span>
     </button>
@@ -34,7 +38,7 @@
   {/if}
 
   {#if showAddField}
-    <AddFieldModal selectedScreener={selectedScreener} on:notifyFieldAddition="updateFieldAddition(event.newField)"/>
+    <AddFieldModal selectedScreener={selectedScreener} newField={selectedField} on:notifyFieldSave="updateFieldSave(event.newField, event.isNew)"/>
   {/if}
 </div>
 
@@ -77,6 +81,7 @@
     data() {
       let screeners = ConfigService.getScreeners();
       return {
+        selectedField: {},
         selectedScreener: {},
         screeners,
         isNew: true,
@@ -89,15 +94,33 @@
       };
     },
     methods: {
+      showFieldModal(field) {
+        this.set({
+          showAddField: true,
+          selectedField: field || {}
+        });
+      },
       onScreenerChange(screener) {
         let { configuration } = this.get();
         configuration.screenerId = screener.screenId;
         this.set({ selectedScreener: screener, configuration });
       },
-      updateFieldAddition(newField) {
+      updateFieldSave(newField, isNew) {
         if (newField) {
           let { configuration } = this.get();
-          configuration.fields.push(newField);
+          if (isNew) {
+            configuration.fields.push(newField);
+          } else {
+            let updatedFieldPosition = -1;
+            configuration.fields.some((field, index) => {
+              if (field.id === newField.id) {
+                updatedFieldPosition = index;
+                return false;
+              }
+            });
+            configuration.fields.splice(updatedFieldPosition, 1, newField);
+          }
+
           this.set({ configuration });
         }
         this.set({ showAddField: false });
@@ -162,5 +185,9 @@
   .config-name {
     margin-bottom: 30px;
     border-bottom: 0px;
+  }
+  .field-box-wrapper {
+    display: flex;
+    justify-content: space-between;
   }
 </style>
