@@ -1,5 +1,5 @@
 <h2>Edit Configuration</h2>
-<ConfigEditor on:saveConfig="editConfig(event.config)" data={configuration}/>
+<ConfigEditor on:saveConfig="editConfig(event.config)" configuration={configuration}/>
 <script>
   import ConfigEditor from "../../components/config-editor.html";
   import * as sapper from "../../../__sapper__/client.js";
@@ -13,7 +13,6 @@
       return AjaxService.get({
         url: "/v1/configurations/" + configId
       })
-        .then(r => r.json())
         .then(configuration => {
           return { configuration };
         })

@@ -1,18 +1,16 @@
 <div class="config-editor">
-  <FormField name="Screeners">
-    {#if isNew}
-      <SvelteSelect 
-        labelKey="screenName" 
-        valueKey="screenId"
-        selectedValue={selectedScreener}  
-        on:change="onScreenerChange(event.option)" 
-        options={screeners} 
-        prompt="Select Screener"
-      />
-    {:else}
-      <input type="text" class="form-control" value={selectedScreener.screenName} />
-    {/if}
+  <FormField name="Screener">
+    <SvelteSelect 
+      labelKey="screenName" 
+      valueKey="screenId"
+      selectedValue={selectedScreener && selectedScreener.screenId || ''}  
+      on:change="onScreenerChange(event.option)" 
+      options={screeners} 
+      prompt="Select Screener"
+      isDisabled={!isNew}
+    />
   </FormField>
+  
   
   {#if selectedScreener && selectedScreener.screenId}
     <FormField classNames="config-name" name="Name">
@@ -59,11 +57,29 @@
       SvelteSelect,
       FieldBox
     },
+    oncreate() {
+      let { configuration, isNew, selectedScreener } = this.options.data || {};
+      isNew = !(
+        configuration &&
+        configuration.screenerId &&
+        configuration.desc &&
+        configuration.fields &&
+        configuration.fields.length
+      );
+      if (!isNew) {
+        selectedScreener = {
+          screenId: configuration.screenerId
+        };
+        this.set({ selectedScreener });
+      }
+      this.set({ isNew });
+    },
     data() {
       let screeners = ConfigService.getScreeners();
       return {
         selectedScreener: {},
         screeners,
+        isNew: true,
         showAddField: false,
         configuration: {
           screenerId: "",
@@ -71,15 +87,6 @@
           fields: []
         }
       };
-    },
-    computed: {
-      isNew: ({ configuration }) => {
-        return !(
-          configuration.desc &&
-          configuration.fields &&
-          configuration.fields.length
-        );
-      }
     },
     methods: {
       onScreenerChange(screener) {

@@ -1,10 +1,10 @@
-<select ref:select class="form-control" on:change="selectOption()">
+<select ref:select class="form-control" on:change="selectOption()" {disabled}>
   {#if prompt}
     <option value="">{prompt}</option>
   {/if}
   {#each options as option, index}
-    {#if selectedValue === option.value} 
-      <option data-index={index} value={option[valueKey]} selected}>{option[labelKey]}</option>
+    {#if (selectedValue + '') === (option[valueKey] + '')} 
+      <option data-index={index} value={option[valueKey]} selected>{option[labelKey]}</option>
     {:else}
       <option data-index={index} value={option[valueKey]}>{option[labelKey]}</option>
     {/if}
@@ -18,12 +18,18 @@
   export default {
     data() {
       return {
+        isDisabled: false,
         prompt: "",
         labelKey: "label",
         valueKey: "value",
-        selectedValue: {},
+        selectedValue: "",
         options: []
       };
+    },
+    computed: {
+      disabled: ({ isDisabled }) => {
+        return isDisabled ? "disabled" : "";
+      }
     },
 
     methods: {
