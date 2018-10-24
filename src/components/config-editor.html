@@ -22,6 +22,7 @@
         <div class="field-box-wrapper">
           <FieldBox field={field} />
           <button class="glyphicon glyphicon-edit icon-btn" on:click="showFieldModal(field)" title="Edit Field {field.desc}" ></button>
+          <button class="glyphicon glyphicon-remove icon-btn" on:click="deleteField(index)" title="Delete Field {field.desc}" ></button>
         </div>
        
       {/each}
